@@ -11,7 +11,8 @@ Este endpoint permite obtener y actualizar la información del perfil del usuari
 
 **Headers requeridos:**
 
-- `Authorization`: Token de autenticación Bearer.
+- `Cookie: accessToken=<jwt>`: Cookie con el token de acceso establecida por `POST /api/auth/login`. Se envía
+  automáticamente en el encabezado `Cookie`.
 - `Content-Type`: `application/json`
 - **Parámetros de consulta:** Ninguno
 
@@ -51,7 +52,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "Perfil no encontrado",
   "status": 404,
   "detail": "No se encontró el perfil del usuario autenticado.",
-  "instance": "/api/profile"
+  "instance": "/api/profiles"
 }
 ```
 
@@ -65,7 +66,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "No autorizado",
   "status": 401,
   "detail": "El token de autenticación es inválido o ha expirado.",
-  "instance": "/api/profile"
+  "instance": "/api/profiles"
 }
 ```
 
@@ -79,7 +80,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "Too Many Requests",
   "status": 429,
   "detail": "Has superado el número máximo de intentos de autenticación. Inténtalo de nuevo más tarde.",
-  "instance": "/api/profile",
+  "instance": "/api/profiles",
   "retryAfter": 60
 }
 ```
@@ -94,7 +95,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "Internal Server Error",
   "status": 500,
   "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
-  "instance": "/api/profile"
+  "instance": "/api/profiles"
 }
 ```
 
@@ -107,7 +108,8 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
 
 **Headers requeridos:**
 
-- `Authorization`: Token de autenticación Bearer.
+- `Cookie: accessToken=<jwt>`: Cookie con el token de acceso establecida por `POST /api/auth/login`. Se envía
+  automáticamente en el encabezado `Cookie`.
 - `Content-Type`: `application/json`
 
 ### Parámetros de la petición
@@ -152,11 +154,7 @@ Prefirmadas (Pre-signed URLs) hacia Cloudflare R2. Implementamos esta arquitectu
 
 ### Respuesta Exitosa
 
-**Status:** `204 No Content`
-
-```json
-{}
-```
+**Status:** `204 No Content` (sin cuerpo)
 
 ### Respuestas de error
 
@@ -232,21 +230,20 @@ Prefirmadas (Pre-signed URLs) hacia Cloudflare R2. Implementamos esta arquitectu
 
 **Headers requeridos:**
 
-- `Authorization`: Token de autenticación Bearer.
+- `Cookie: accessToken=<jwt>`: Cookie con el token de acceso establecida por `POST /api/auth/login`. Se envía
+  automáticamente en el encabezado `Cookie`.
 - `Content-Type`: `application/json`
 
 ### Parámetros de la petición
 
-| Campo      | Tipo     | Descripción                                        |
-|:-----------|:---------|:---------------------------------------------------|
-| `building` | `string` | ID del edificio principal donde el usuario radica. |
+| Campo        | Tipo     | Descripción                                        |
+|:-------------|:---------|:---------------------------------------------------|
+| `buildingId` | `string` | ID del edificio principal donde el usuario radica. |
 
 ### Reglas de validación
 
 - No puede ser null o una cadena vacia
 - Tiene que existir un edificio con ese ID que forme parte de la lista de edificios disponibles de la universidad.
-
-#### `building`
 
 **Ejemplo de petición:**
 
@@ -284,7 +281,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "instance": "/api/profiles/building",
   "errors": [
     {
-      "field": "building",
+      "field": "buildingId",
       "message": "El edificio es obligatorio y debe ser un ID válido de un edificio existente."
     }
   ]

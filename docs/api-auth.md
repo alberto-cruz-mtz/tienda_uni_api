@@ -417,20 +417,6 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
 }
 ```
 
-#### CSRF token inválido
-
-**Status:** 403 Forbidden
-
-```json
-{
-  "type": "https://example.com/errors/csrf-invalid",
-  "title": "CSRF Token Invalid",
-  "status": 403,
-  "detail": "El token CSRF no es válido o está ausente.",
-  "instance": "/api/auth/refresh"
-}
-```
-
 #### Demasiadas solicitudes
 
 **Status:** 429 Too Many Requests
@@ -495,11 +481,7 @@ electrónico con un enlace de verificación; el usuario debe abrir dicho enlace 
 
 ### Respuesta Exitosa
 
-**Status:** 204 No Content
-
-```json
-{}
-```
+**Status:** 204 No Content (sin cuerpo)
 
 > Si el usuario no verifica su correo electrónico dentro del tiempo de vida del token, deberá solicitar un nuevo token
 > de verificación y
@@ -613,5 +595,188 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "status": 500,
   "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
   "instance": "/api/auth/verify-email"
+}
+```
+
+## Solicitar correo de verificación
+
+Endpoint usado para solicitar un nuevo correo de verificación cuando el token original expiró, ya fue utilizado o nunca
+fue recibido. El sistema genera un nuevo token (invalidando los anteriores) y envía un correo electrónico con el enlace
+de verificación.
+
+**Ruta:** `/api/auth/verify-email/request`
+**Método:** `POST`
+
+### Parámetros de la petición
+
+| Campo   | Tipo     | Descripción                                |
+|:--------|:---------|:-------------------------------------------|
+| `email` | `string` | Correo electrónico del usuario registrado. |
+
+### Reglas de validación
+
+#### `email`
+
+- No puede ser `null` ni una cadena vacía.
+- Debe tener un formato de correo electrónico válido (`local-part@domain`).
+
+**Ejemplo de petición:**
+
+```json
+{
+  "email": "emir.polito@alumnos.uni.edu.mx"
+}
+```
+
+### Comportamiento anti-enumeración
+
+Por seguridad, este endpoint **siempre devuelve 204 No Content** independientemente de:
+
+- Si el correo electrónico está registrado.
+- Si el correo electrónico ya fue verificado.
+- Si el dominio del correo no pertenece a una universidad permitida.
+
+Esto previene que un atacante pueda enumerar correos electrónicos registrados analizando las respuestas. El nuevo correo
+solo se envía si la cuenta existe, no está verificada y el dominio es permitido; en cualquier otro caso la operación es
+un no-op silencioso.
+
+### Respuesta Exitosa
+
+**Status:** 204 No Content (sin cuerpo)
+
+### Respuestas de Error
+
+Las respuestas de error siguen el
+estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/info/rfc9457/).
+
+#### Datos de entrada inválidos
+
+**Status:** 400 Bad Request
+
+```json
+{
+  "type": "https://example.com/errors/validation",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "Uno o más campos no cumplen con las reglas de validación.",
+  "instance": "/api/auth/verify-email/request",
+  "errors": [
+    {
+      "field": "email",
+      "message": "El formato del correo electrónico es inválido."
+    }
+  ]
+}
+```
+
+#### Demasiadas solicitudes
+
+**Status:** 429 Too Many Requests
+
+```json
+{
+  "type": "https://example.com/errors/rate-limit",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Has superado el número máximo de solicitudes de verificación. Inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/verify-email/request",
+  "retryAfter": 60
+}
+```
+
+#### Error interno del servidor
+
+**Status:** 500 Internal Server Error
+
+```json
+{
+  "type": "https://example.com/errors/internal-server-error",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/verify-email/request"
+}
+```
+
+## Cerrar sesión
+
+Endpoint usado para cerrar la sesión del usuario actual. Invalida el `refreshToken` (impidiendo su reutilización) y
+limpia las cookies de autenticación del navegador.
+
+**Ruta:** `/api/auth/logout`
+**Método:** `POST`
+
+### Envío de cookies
+
+Este endpoint requiere la cookie `accessToken` establecida por `POST /api/auth/login`. No recibe parámetros en el cuerpo
+de la petición.
+
+**Atributos esperados de la cookie `accessToken`:**
+
+| Atributo   | Valor                  |
+|:-----------|:-----------------------|
+| `HttpOnly` | `true`                 |
+| `SameSite` | `Strict`               |
+| `Path`     | `/`                    |
+| `Secure`   | `true` (en producción) |
+
+**Ejemplo de petición:**
+
+```http
+POST /api/auth/logout HTTP/1.1
+Host: api.tiendauni.com
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Comportamiento
+
+- El servidor invalida el `refreshToken` asociado a la sesión, de modo que no podrá ser utilizado en futuras llamadas a
+  `POST /api/auth/refresh`.
+- La respuesta incluye los encabezados `Set-Cookie` con `Max-Age=0` para limpiar las cookies `accessToken` y
+  `refreshToken` en el navegador.
+- El endpoint es **idempotente**: si la sesión ya fue invalidada o el `accessToken` ya expiró, devuelve la misma
+  respuesta sin error.
+
+### Respuesta Exitosa
+
+**Status:** 204 No Content (sin cuerpo)
+
+```http
+HTTP/1.1 204 No Content
+Set-Cookie: accessToken=; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=0
+Set-Cookie: refreshToken=; Path=/api/auth/refresh; HttpOnly; SameSite=Strict; Secure; Max-Age=0
+```
+
+### Respuestas de Error
+
+Las respuestas de error siguen el
+estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/info/rfc9457/).
+
+#### Demasiadas solicitudes
+
+**Status:** 429 Too Many Requests
+
+```json
+{
+  "type": "https://example.com/errors/rate-limit",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Has superado el número máximo de intentos de cierre de sesión. Inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/logout",
+  "retryAfter": 60
+}
+```
+
+#### Error interno del servidor
+
+**Status:** 500 Internal Server Error
+
+```json
+{
+  "type": "https://example.com/errors/internal-server-error",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/logout"
 }
 ```
