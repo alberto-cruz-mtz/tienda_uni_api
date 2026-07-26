@@ -459,3 +459,159 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "instance": "/api/auth/refresh"
 }
 ```
+
+## Autorizar correo electrónico
+
+Endpoint usado para autorizar el correo electrónico de un usuario registrado. Al registrarse, el sistema envía un correo
+electrónico con un enlace de verificación; el usuario debe abrir dicho enlace y la aplicación cliente envía el
+`token` resultante a este endpoint para activar la cuenta.
+
+**Ruta:** `/api/auth/verify-email`
+**Método:** `POST`
+
+### Parámetros de la petición
+
+| Campo   | Tipo     | Descripción                                                                                                                    |
+|:--------|:---------|:-------------------------------------------------------------------------------------------------------------------------------|
+| `token` | `string` | Token de verificación recibido en el enlace del correo electrónico (por ejemplo `https://app.tiendauni.com/verify?token=...`). |
+
+### Reglas de validación
+
+#### `token`
+
+- No puede ser `null` ni una cadena vacía.
+- Debe tener un formato válido: solo caracteres alfanuméricos y guiones (`-` o `_`), con una longitud de entre **36 y
+  255 caracteres**.
+- No debe haber sido utilizado previamente (los tokens son de un solo uso).
+- No debe estar expirado (TTL recomendado: **24 horas** desde su emisión).
+
+**Ejemplo de petición:**
+
+```json
+{
+  "token": "4f1c2e9a-7b3d-4d8e-b6a1-9c2f0d4e5a3b"
+}
+```
+
+### Respuesta Exitosa
+
+**Status:** 204 No Content
+
+```json
+{}
+```
+
+> Si el usuario no verifica su correo electrónico dentro del tiempo de vida del token, deberá solicitar un nuevo token
+> de verificación y
+> autenticarse con sus credenciales mediante `POST /api/auth/login`. Si el usuario no lo hace, su cuenta permanecerá
+> inactiva y no podrá acceder a la API aunque posea su token de acceso
+
+### Respuestas de Error
+
+Las respuestas de error siguen el
+estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/info/rfc9457/).
+
+#### Token ausente o inválido
+
+**Status:** 400 Bad Request
+
+```json
+{
+  "type": "https://example.com/errors/validation",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "Uno o más campos no cumplen con las reglas de validación.",
+  "instance": "/api/auth/verify-email",
+  "errors": [
+    {
+      "field": "token",
+      "message": "El token es obligatorio."
+    }
+  ]
+}
+```
+
+#### Token expirado
+
+**Status:** 410 Gone
+
+```json
+{
+  "type": "https://example.com/errors/verification-token-expired",
+  "title": "Verification Token Expired",
+  "status": 410,
+  "detail": "El token de verificación ha expirado. Solicita uno nuevo para activar tu cuenta.",
+  "instance": "/api/auth/verify-email"
+}
+```
+
+#### Token ya utilizado
+
+**Status:** 409 Conflict
+
+```json
+{
+  "type": "https://example.com/errors/verification-token-already-used",
+  "title": "Verification Token Already Used",
+  "status": 409,
+  "detail": "El token de verificación ya fue utilizado. Si tu cuenta no está activa, solicita un nuevo correo de verificación.",
+  "instance": "/api/auth/verify-email"
+}
+```
+
+#### Token no encontrado
+
+**Status:** 404 Not Found
+
+```json
+{
+  "type": "https://example.com/errors/verification-token-not-found",
+  "title": "Verification Token Not Found",
+  "status": 404,
+  "detail": "El token de verificación no es válido.",
+  "instance": "/api/auth/verify-email"
+}
+```
+
+#### Correo electrónico ya verificado
+
+**Status:** 409 Conflict
+
+```json
+{
+  "type": "https://example.com/errors/email-already-verified",
+  "title": "Email Already Verified",
+  "status": 409,
+  "detail": "El correo electrónico ya fue verificado anteriormente.",
+  "instance": "/api/auth/verify-email"
+}
+```
+
+#### Demasiadas solicitudes
+
+**Status:** 429 Too Many Requests
+
+```json
+{
+  "type": "https://example.com/errors/rate-limit",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Has superado el número máximo de intentos de verificación. Inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/verify-email",
+  "retryAfter": 60
+}
+```
+
+#### Error interno del servidor
+
+**Status:** 500 Internal Server Error
+
+```json
+{
+  "type": "https://example.com/errors/internal-server-error",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/verify-email"
+}
+```
