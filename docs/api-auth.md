@@ -51,7 +51,8 @@ Endpoint usado para autenticar a un usuario y obtener un token de acceso y refre
   "id": "77d3c6af-dff1-4ab1-87a3-4730581e5638",
   "user": {
     "name": "emir polito guevara",
-    "avatarUrl": "https://avatar.png"
+    "avatarUrl": "https://avatar.png",
+    "building": "Biblioteca"
   },
   "expiresAt": "2026-07-25T20:25:18Z"
 }
