@@ -1,6 +1,6 @@
 # Perfil de Usuario
 
-Este endpoint permite obtener y actualizar la información del perfil del usuario.
+Estos endpoints permiten obtener y actualizar la información del perfil del usuario.
 
 ## Obtener perfil de usuario
 
@@ -18,7 +18,7 @@ Este endpoint permite obtener y actualizar la información del perfil del usuari
 
 **Ejemplo de petición:**
 
-```http
+```http request
 GET /api/profiles HTTP/1.1
 Host: api.tiendauni.com
 Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -342,5 +342,146 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "status": 500,
   "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
   "instance": "/api/profiles/building"
+}
+```
+
+## Obtener URL pre-firmada para subir avatar/foto del perfil de usuario
+
+**Ruta:** `/api/profiles/avatar/presigned-url`
+**Método:** `POST`
+
+**Descripción:** Este endpoint permite obtener una URL pre-firmada para subir el avatar/foto del perfil del usuario
+autenticado directamente a Cloudflare R2.
+
+**Headers requeridos:**
+
+- `Cookie: accessToken=<jwt>`: Cookie con el token de acceso establecida por `POST /api/auth/login`. Se envía
+  automáticamente en el encabezado `Cookie`.
+- `Content-Type`: `application/json`
+
+### Parámetros de la petición
+
+| Campo         | Tipo     | Descripción                                                           |
+|:--------------|:---------|:----------------------------------------------------------------------|
+| `contentType` | `string` | El tipo de contenido del archivo a subir (por ejemplo, `image/jpeg`). |
+| `fileSize`    | `number` | La longitud del contenido del archivo a subir (en bytes).             |
+| `fileName`    | `string` | El nombre del archivo a subir (por ejemplo, `avatar.jpg`).            |
+
+### Reglas de validación
+
+#### `contentType`
+
+- Debe ser un tipo de contenido permitido por la política de seguridad de la aplicación.
+- Debe ser un tipo de contenido válido para imágenes (por ejemplo, `image/jpeg`, `image/png`, `image/gif`, `image/webp`,
+  `image/svg+xml`).
+- No debe ser nulo o una cadena vacía.
+
+#### `fileSize`
+
+- Debe ser un número entero positivo.
+- No debe exceder el tamaño máximo permitido por la política de seguridad de la aplicación (por ejemplo, 10MB).
+- No puede ser nulo o cero.
+
+#### `fileName`
+
+- No debe ser una cadena nula ni vacía.
+- No debe contener caracteres no permitidos (por ejemplo, caracteres especiales o espacios en blanco).
+- Debe tener una extensión de archivo válida (por ejemplo, `.jpg`, `.png`, `.gif`, `.webp`, `.svg`).
+
+**Ejemplo de petición:**
+
+```json
+{
+  "contentType": "image/jpeg",
+  "fileSize": 102400,
+  "fileName": "avatar.jpg"
+}
+```
+
+### Respuesta Exitosa
+
+**Status:** `200 OK`
+
+```json
+{
+  "uploadUrl": "https://example.com/presigned-upload-url",
+  "avatarUrl": "https://example.com/avatar.jpg",
+  "fileKey": "avatars/77d3c6af-dff1-4ab1-87a3-4730581e5638/avatar.jpg"
+}
+```
+
+#### Respuestas de error
+
+Las respuestas de error siguen el
+estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/info/rfc9457/).
+
+#### Datos de entrada inválidos
+
+**Status:** `400 Bad Request`
+
+```json
+{
+  "type": "https://example.com/errors/invalid-upload-parameters",
+  "title": "Parámetros de subida inválidos",
+  "status": 400,
+  "detail": "Los parámetros proporcionados para la subida no son válidos.",
+  "instance": "/api/profiles/avatars/presigned-url",
+  "errors": [
+    {
+      "field": "contentType",
+      "message": "El tipo de contenido es obligatorio y debe ser un tipo de imagen válido."
+    },
+    {
+      "field": "fileSize",
+      "message": "El tamaño del archivo es obligatorio y debe ser un número positivo que no exceda el límite permitido."
+    },
+    {
+      "field": "fileName",
+      "message": "El nombre del archivo es obligatorio y debe tener una extensión válida."
+    }
+  ]
+}
+```
+
+#### Error de autenticación
+
+**Status:** `401 Unauthorized`
+
+```json
+{
+  "type": "https://example.com/errors/unauthorized",
+  "title": "No autorizado",
+  "status": 401,
+  "detail": "El token de autenticación es inválido o ha expirado.",
+  "instance": "/api/profiles/avatars/presigned-url"
+}
+```
+
+#### Demasiadas solicitudes
+
+**Status:** 429 Too Many Requests
+
+```json
+{
+  "type": "https://example.com/errors/rate-limit",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Has superado el número máximo de intentos de autenticación. Inténtalo de nuevo más tarde.",
+  "instance": "/api/profiles/avatars/presigned-url",
+  "retryAfter": 60
+}
+```
+
+#### Error interno del servidor
+
+**Status:** 500 Internal Server Error
+
+```json
+{
+  "type": "https://example.com/errors/internal-server-error",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
+  "instance": "/api/profiles/avatars/presigned-url"
 }
 ```

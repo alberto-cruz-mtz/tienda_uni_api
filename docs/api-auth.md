@@ -54,8 +54,15 @@ Endpoint usado para autenticar a un usuario y obtener un token de acceso y refre
     "avatarUrl": "https://avatar.png",
     "building": "Biblioteca"
   },
+  "isVerified": true,
   "expiresAt": "2026-07-25T20:25:18Z"
 }
+```
+
+```http
+HTTP/1.1 200 OK
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
+Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/api/auth/refresh; HttpOnly; SameSite=Strict; Secure; Max-Age=604800
 ```
 
 #### Cookies de sesión
@@ -67,13 +74,13 @@ de la respuesta.
 
 Cookie con el token de acceso utilizado para autenticar las peticiones a la API.
 
-| Atributo   | Valor                  |
-|:-----------|:-----------------------|
-| `HttpOnly` | `true`                 |
-| `SameSite` | `Strict`               |
-| `Path`     | `/`                    |
-| `Max-Age`  | Igual a `expiresAt`    |
-| `Secure`   | `true` (en producción) |
+| Atributo   | Valor                            |
+|:-----------|:---------------------------------|
+| `HttpOnly` | `true`                           |
+| `SameSite` | `Strict`                         |
+| `Path`     | `/`                              |
+| `Max-Age`  | 15 Minutos (Igual a `expiresAt`) |
+| `Secure`   | `true` (en producción)           |
 
 #### `refreshToken`
 
@@ -86,13 +93,6 @@ Cookie con el token utilizado para renovar el `accessToken` cuando expira.
 | `Path`     | `/api/auth/refresh`    |
 | `Max-Age`  | 7 días                 |
 | `Secure`   | `true` (en producción) |
-
-**Ejemplo de encabezado `Set-Cookie`:**
-
-```http
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
-Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/api/auth/refresh; HttpOnly; SameSite=Strict; Secure; Max-Age=604800
-```
 
 > Por seguridad, las cookies **no son accesibles desde JavaScript** (`HttpOnly`) y solo se envían en peticiones del
 > mismo sitio (`SameSite=Strict`), mitigando ataques XSS y CSRF.
@@ -206,7 +206,7 @@ Endpoint usado para registrar a un nuevo usuario y obtener un token de acceso y 
 - `password` debe tener entre 8 y 25 caracteres, debe contener (caracteres especiales, minúsculas, mayúsculas y números)
   y no debe estar vacío.
 
-**Ejemplo de peticion:**
+**Ejemplo de petición:**
 
 ```json
 {
@@ -227,10 +227,51 @@ Endpoint usado para registrar a un nuevo usuario y obtener un token de acceso y 
   "message": "Usuario registrado correctamente. Por favor, verifica tu correo electrónico.",
   "user": {
     "id": "77d3c6af-dff1-4ab1-87a3-4730581e5638",
+    "name": "Emir Polito Guevara",
     "email": "emir.polito@alumnos.uni.edu.mx"
-  }
+  },
+  "isVerified": false,
+  "expiresAt": "2026-07-25T20:25:18Z"
 }
 ```
+
+```http
+HTTP/1.1 201 Created
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
+Set-Cookie: refreshToken=eyJhbGciOiJIUzIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/api/auth/refresh; HttpOnly; SameSite=Strict; Secure; Max-Age=604800
+```
+
+#### Cookies de sesión
+
+La respuesta exitosa incluye las cookies de autenticación en el encabezado `Set-Cookie`. **No** se exponen en el cuerpo
+de la respuesta.
+
+#### `accessToken`
+
+Cookie con el token de acceso utilizado para autenticar las peticiones a la API.
+
+| Atributo   | Valor                            |
+|:-----------|:---------------------------------|
+| `HttpOnly` | `true`                           |
+| `SameSite` | `Strict`                         |
+| `Path`     | `/`                              |
+| `Max-Age`  | 15 Minutos (Igual a `expiresAt`) |
+| `Secure`   | `true` (en producción)           |
+
+#### `refreshToken`
+
+Cookie con el token utilizado para renovar el `accessToken` cuando expira.
+
+| Atributo   | Valor                  |
+|:-----------|:-----------------------|
+| `HttpOnly` | `true`                 |
+| `SameSite` | `Strict`               |
+| `Path`     | `/api/auth/refresh`    |
+| `Max-Age`  | 7 días                 |
+| `Secure`   | `true` (en producción) |
+
+> Por seguridad, las cookies **no son accesibles desde JavaScript** (`HttpOnly`) y solo se envían en peticiones del
+> mismo sitio (`SameSite=Strict`), mitigando ataques XSS y CSRF.
 
 ### Respuestas de Error
 
@@ -778,5 +819,72 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "status": 500,
   "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
   "instance": "/api/auth/logout"
+}
+```
+
+## Verificar si el usuario verifico su correo electrónico
+
+**Ruta:** `/api/auth/me`
+**Método:** `GET`
+
+**Descripción:** Endpoint usado para verificar si el usuario actual ha verificado su correo electrónico. Devuelve un
+nuevo accessToken mediante cookies.
+
+### Envio de cookies
+
+Este endpoint requiere la cookie `accessToken` establecida por `POST /api/auth/login`. No recibe parámetros en el cuerpo
+de la petición. La cookie `accessToken` se envía automáticamente en el encabezado `Cookie` de la petición. El servidor
+la lee para autenticar al usuario, pero en este endpoint al ser un token de acceso para un usuario recientemente
+registrado el token posee un claim (`role`:`ROLE_UNVERFIED`) que solo permite acceso a este endpoint y deniega el acceso
+a todos los demás aunque posea su token de acceso.
+
+**Ejemplo de petición:**
+
+```http
+GET /api/auth/me HTTP/1.1
+Host: api.tiendauni.com
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Respuesta Exitosa
+
+**Status:** 204 No Content (sin cuerpo)
+
+```http
+HTTP/1.1 204 No Content
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
+```
+
+### Respuestas de Error
+
+Las respuestas de error siguen el
+estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/info/rfc9457/).
+
+#### Demasiadas solicitudes
+
+**Status:** 429 Too Many Requests
+
+```json
+{
+  "type": "https://example.com/errors/rate-limit",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Has superado el número máximo de intentos de cierre de sesión. Inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/me",
+  "retryAfter": 60
+}
+```
+
+#### Error interno del servidor
+
+**Status:** 500 Internal Server Error
+
+```json
+{
+  "type": "https://example.com/errors/internal-server-error",
+  "title": "Internal Server Error",
+  "status": 500,
+  "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
+  "instance": "/api/auth/me"
 }
 ```
