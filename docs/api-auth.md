@@ -238,40 +238,14 @@ Endpoint usado para registrar a un nuevo usuario y obtener un token de acceso y 
 ```http
 HTTP/1.1 201 Created
 Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
-Set-Cookie: refreshToken=eyJhbGciOiJIUzIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/api/auth/refresh; HttpOnly; SameSite=Strict; Secure; Max-Age=604800
+Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/api/auth/refresh; HttpOnly; SameSite=Strict; Secure; Max-Age=604800
 ```
 
 #### Cookies de sesión
 
-La respuesta exitosa incluye las cookies de autenticación en el encabezado `Set-Cookie`. **No** se exponen en el cuerpo
-de la respuesta.
-
-#### `accessToken`
-
-Cookie con el token de acceso utilizado para autenticar las peticiones a la API.
-
-| Atributo   | Valor                            |
-|:-----------|:---------------------------------|
-| `HttpOnly` | `true`                           |
-| `SameSite` | `Strict`                         |
-| `Path`     | `/`                              |
-| `Max-Age`  | 15 Minutos (Igual a `expiresAt`) |
-| `Secure`   | `true` (en producción)           |
-
-#### `refreshToken`
-
-Cookie con el token utilizado para renovar el `accessToken` cuando expira.
-
-| Atributo   | Valor                  |
-|:-----------|:-----------------------|
-| `HttpOnly` | `true`                 |
-| `SameSite` | `Strict`               |
-| `Path`     | `/api/auth/refresh`    |
-| `Max-Age`  | 7 días                 |
-| `Secure`   | `true` (en producción) |
-
-> Por seguridad, las cookies **no son accesibles desde JavaScript** (`HttpOnly`) y solo se envían en peticiones del
-> mismo sitio (`SameSite=Strict`), mitigando ataques XSS y CSRF.
+La respuesta exitosa incluye las mismas cookies de autenticación (`accessToken` y `refreshToken`) que
+`POST /api/auth/login`. Consulta la sección de [Autenticación](#autenticación) para conocer sus atributos completos.
+**No** se exponen en el cuerpo de la respuesta.
 
 ### Respuestas de Error
 
@@ -852,7 +826,7 @@ Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ```http
 HTTP/1.1 204 No Content
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=900
 ```
 
 ### Respuestas de Error
