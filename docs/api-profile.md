@@ -1,4 +1,4 @@
-# Perfil de Usuario
+# API Perfil de Usuario
 
 Estos endpoints permiten obtener y actualizar la información del perfil del usuario.
 
@@ -11,8 +11,7 @@ Estos endpoints permiten obtener y actualizar la información del perfil del usu
 
 **Headers requeridos:**
 
-- `Cookie: accessToken=<jwt>`: Cookie con el token de acceso establecida por `POST /api/auth/login`. Se envía
-  automáticamente en el encabezado `Cookie`.
+- `Cookie: accessToken=<jwt>`: Cookie con el token de acceso establecida por `POST /api/auth/login`. Se envía automáticamente en el encabezado `Cookie`.
 - `Content-Type`: `application/json`
 - **Parámetros de consulta:** Ninguno
 
@@ -138,7 +137,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
 
 ### Nota Arquitectónica: ¿Por qué este endpoint recibe una URL y no un Multipart/File?
 
-Este endpoint (`PATCH /api/profile/avatar`) está diseñado para recibir un JSON con la URL final de la imagen en lugar de
+Este endpoint (`PATCH /api/profiles/avatar`) está diseñado para recibir un JSON con la URL final de la imagen en lugar de
 procesar el archivo físico mediante `multipart/form-data`.
 
 Esta decisión se basa en el patrón de **Direct-to-Cloud Uploads** (Subidas directas a la nube) utilizando URLs
@@ -164,7 +163,7 @@ Prefirmadas (Pre-signed URLs) hacia Cloudflare R2. Implementamos esta arquitectu
 
 ```json
 {
-  "type": "https://example.com/errors/invalid-avatar-url",
+  "type": "https://example.com/errors/validation",
   "title": "URL de avatar inválida",
   "status": 400,
   "detail": "La URL proporcionada para el avatar no es válida o no cumple con los requisitos.",
@@ -274,7 +273,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
 
 ```json
 {
-  "type": "https://example.com/errors/invalid-building",
+  "type": "https://example.com/errors/validation",
   "title": "Edificio inválido",
   "status": 400,
   "detail": "El edificio proporcionado no es válido o no existe.",
@@ -425,7 +424,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "Parámetros de subida inválidos",
   "status": 400,
   "detail": "Los parámetros proporcionados para la subida no son válidos.",
-  "instance": "/api/profiles/avatars/presigned-url",
+  "instance": "/api/profiles/avatar/presigned-url",
   "errors": [
     {
       "field": "contentType",
@@ -453,7 +452,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "No autorizado",
   "status": 401,
   "detail": "El token de autenticación es inválido o ha expirado.",
-  "instance": "/api/profiles/avatars/presigned-url"
+  "instance": "/api/profiles/avatar/presigned-url"
 }
 ```
 
@@ -467,7 +466,7 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "Too Many Requests",
   "status": 429,
   "detail": "Has superado el número máximo de intentos de autenticación. Inténtalo de nuevo más tarde.",
-  "instance": "/api/profiles/avatars/presigned-url",
+  "instance": "/api/profiles/avatar/presigned-url",
   "retryAfter": 60
 }
 ```
@@ -482,6 +481,6 @@ estándar [RFC 9457: Problem Details for HTTP APIs](https://www.rfc-editor.org/i
   "title": "Internal Server Error",
   "status": 500,
   "detail": "Ocurrió un error inesperado en el servidor. Por favor, inténtalo de nuevo más tarde.",
-  "instance": "/api/profiles/avatars/presigned-url"
+  "instance": "/api/profiles/avatar/presigned-url"
 }
 ```
