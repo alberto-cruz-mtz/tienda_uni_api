@@ -100,7 +100,8 @@ CREATE TABLE IF NOT EXISTS refresh_tokens
     token      UUID        NOT NULL UNIQUE,
     revoked    BOOLEAN     NOT NULL DEFAULT FALSE,
     expires_at TIMESTAMPTZ NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS salespeople
