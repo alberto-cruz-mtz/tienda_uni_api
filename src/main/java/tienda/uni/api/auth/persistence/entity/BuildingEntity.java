@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -29,8 +30,8 @@ public class BuildingEntity {
     private String name;
 
     @Column(name = "latitude", nullable = false, precision = 10, scale = 8)
-    private Double latitude;
+    private BigDecimal latitude;
 
     @Column(name = "longitude", nullable = false, precision = 10, scale = 8)
-    private Double longitude;
+    private BigDecimal longitude;
 }
