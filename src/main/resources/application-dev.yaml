@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    username: root
+    password: 1234
+    url: jdbc:postgresql://localhost:5432/tienda_uni
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+
+jwt:
+  secret: mysecretkey # Solo desarrollo. En prod se inyecta via JWT_SECRET
+
+app:
+  cookie:
+    secure: false # HTTP plano en local
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:4200,http://localhost:8080,http://localhost:5173" # Frontends locales comunes
+  url:
+    error: http://localhost:3000/errors # Redirect local para errores de auth

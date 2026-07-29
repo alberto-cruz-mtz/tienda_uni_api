@@ -12,3 +12,7 @@ jwt:
 app:
   cookie:
     secure: true # Activado para forzar que las cookies solo viajen sobre HTTPS
+  cors:
+    allowed-origins: ${FRONTEND_URL} # Variable de entorno inyectada por Docker
+  url:
+    error: ${ERROR_URL} # Frontend prod al que se redirige en errores de auth
