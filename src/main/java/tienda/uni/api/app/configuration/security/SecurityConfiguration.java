@@ -32,13 +32,13 @@ public class SecurityConfiguration {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
-                    http.requestMatchers(HttpMethod.POST, "api/auth/signup").permitAll();
-                    http.requestMatchers(HttpMethod.POST, "api/auth/login").permitAll();
-                    http.requestMatchers(HttpMethod.POST, "api/auth/refresh").permitAll();
-                    http.requestMatchers(HttpMethod.POST, "api/auth/logout").authenticated();
+                    http.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/auth/logout").authenticated();
 
-                    http.requestMatchers(HttpMethod.POST, "api/auth/verify-email").hasAuthority("UNVERIFIED");
-                    http.requestMatchers(HttpMethod.POST, "api/auth/send-verification-email").hasAuthority("UNVERIFIED");
+                    http.requestMatchers(HttpMethod.POST, "/auth/verify-email").hasAuthority("UNVERIFIED");
+                    http.requestMatchers(HttpMethod.POST, "/auth/send-verification-email").hasAuthority("UNVERIFIED");
 
                     http.anyRequest().denyAll();
                 })
