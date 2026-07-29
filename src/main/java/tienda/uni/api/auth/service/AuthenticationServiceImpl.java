@@ -1,5 +1,6 @@
 package tienda.uni.api.auth.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -64,6 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
         String email = request.email();
 
@@ -80,11 +82,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // get initial Role (UNVERIFIED) for the new user
         RoleEntity role = roleRepository.findByName(Role.UNVERIFIED);
         assert role != null; // This assertion is safe because the role is predefined and should always exist in the database.
-
         // save the new user with the provided information in the database
         String encodedPassword = passwordEncoder.encode(request.password());
         var profile = ProfileEntity.create(request.firstName(), request.lastName());
         UserEntity user = UserEntity.create(email, encodedPassword, Set.of(role), profile, university);
+        profile.setUser(user); // Set the user reference in the profile entity
         UserEntity savedUser = userRepository.save(user);
 
         // generate response
