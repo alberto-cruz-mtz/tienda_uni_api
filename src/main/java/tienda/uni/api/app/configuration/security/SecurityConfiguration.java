@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                     http.requestMatchers(HttpMethod.POST, "/auth/verify-email").hasAuthority("UNVERIFIED");
                     http.requestMatchers(HttpMethod.POST, "/auth/send-verification-email").hasAuthority("UNVERIFIED");
 
+                    http.requestMatchers("/actuator/**").permitAll();
+
                     http.anyRequest().denyAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
