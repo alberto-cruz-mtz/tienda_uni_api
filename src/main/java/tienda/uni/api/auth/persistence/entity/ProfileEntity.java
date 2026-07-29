@@ -27,10 +27,11 @@ import java.util.UUID;
 public class ProfileEntity {
 
     @Id
+    @Column(name = "user_id")
     private UUID id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
@@ -43,8 +44,8 @@ public class ProfileEntity {
     @Column(name = "photo_url", columnDefinition = "TEXT")
     private String photoUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = BuildingEntity.class)
-    @JoinColumn(name = "building_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = BuildingEntity.class)
+    @JoinColumn(name = "building_id")
     private BuildingEntity building;
 
     public static ProfileEntity create(String firstName, String lastName) {
