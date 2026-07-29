@@ -19,10 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,7 +30,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,20 +45,11 @@ public class UserEntity {
     @Column(name = "verified", nullable = false)
     private boolean verified;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
-
     @JoinColumn(name = "university_id", nullable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, targetEntity = UniversityEntity.class)
     private UniversityEntity university;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, targetEntity = ProfileEntity.class, orphanRemoval = true)
     private ProfileEntity profile;
 
     @ManyToMany(fetch = FetchType.LAZY)

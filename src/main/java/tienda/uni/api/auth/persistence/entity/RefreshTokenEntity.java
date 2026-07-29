@@ -14,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "refresh_tokens")
-public class RefreshTokenEntity {
+public class RefreshTokenEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -44,8 +43,4 @@ public class RefreshTokenEntity {
 
     @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
 }
