@@ -18,6 +18,7 @@ institucional.
 - [Requisitos previos](#requisitos-previos)
 - [Configuración local](#configuración-local)
 - [Ejecución](#ejecución)
+- [Docker (desarrollo y despliegue)](#docker-desarrollo-y-despliegue)
 - [Empaquetado y despliegue](#empaquetado-y-despliegue)
 - [Pruebas](#pruebas)
 - [Documentación API (REST Docs)](#documentación-api-rest-docs)
@@ -155,6 +156,15 @@ La API quedará escuchando en `http://localhost:8080`.
 ```bash
 ./mvnw clean verify
 ```
+
+## Docker (desarrollo y despliegue)
+
+El proyecto incluye un `Dockerfile` multi-stage y un `docker-compose.dev.yaml` listos para usar. Para instrucciones
+detalladas de **cómo levantar los contenedores de desarrollo y construir la imagen de producción** consultá la guía
+dedicada:
+
+- [`DOCKER.md`](DOCKER.md) — variables de entorno, `docker compose up`, build de la imagen, publicación en registry y
+  checklist de despliegue.
 
 ## Empaquetado y despliegue
 
