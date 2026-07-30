@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tienda.uni.api.auth.persistence.entity.RefreshTokenEntity;
 import tienda.uni.api.auth.persistence.repository.RefreshTokenRepository;
 import tienda.uni.api.auth.persistence.entity.UserEntity;
+import tienda.uni.api.auth.presentation.dto.Tokens;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -25,6 +26,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         var savedRefreshToken = repository.save(refreshToken);
 
         return savedRefreshToken.getToken();
+    }
+
+    @Override
+    public Tokens renewAccessAndRefreshToken(UUID refreshToken) {
+
+
+        return null;
     }
 
     public RefreshTokenEntity buildRefreshToken(UserEntity user) {
