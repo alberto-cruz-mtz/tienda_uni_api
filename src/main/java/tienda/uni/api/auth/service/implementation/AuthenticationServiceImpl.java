@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tienda.uni.api.auth.persistence.entity.VerificationTokenEntity;
 import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
 import tienda.uni.api.auth.persistence.entity.ProfileEntity;
 import tienda.uni.api.auth.persistence.model.Role;
@@ -16,11 +17,13 @@ import tienda.uni.api.auth.persistence.entity.UniversityEntity;
 import tienda.uni.api.auth.persistence.repository.UniversityRepository;
 import tienda.uni.api.auth.persistence.entity.UserEntity;
 import tienda.uni.api.auth.persistence.repository.UserRepository;
+import tienda.uni.api.auth.persistence.repository.VerificationTokenRepository;
 import tienda.uni.api.auth.presentation.dto.AuthenticationResponse;
 import tienda.uni.api.auth.presentation.dto.RegisterRequest;
 import tienda.uni.api.auth.presentation.dto.RegisterResponse;
 import tienda.uni.api.auth.presentation.dto.UserResponse;
 import tienda.uni.api.auth.service.interfaces.AuthenticationService;
+import tienda.uni.api.auth.service.interfaces.EmailSenderService;
 import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
 import tienda.uni.api.auth.service.exception.EmailAlreadyExistsException;
 import tienda.uni.api.auth.service.exception.EmailDomainNotAllowedException;
@@ -40,11 +43,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
     private final RoleRepository roleRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     private final RefreshTokenService refreshTokenService;
+    private final EmailSenderService emailSender;
 
     @Override
     @Transactional
@@ -92,6 +97,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserEntity user = UserEntity.create(email, encodedPassword, Set.of(role), profile, university);
         profile.setUser(user); // Set the user reference in the profile entity
         UserEntity savedUser = userRepository.save(user);
+
+        var verificationToken = VerificationTokenEntity.create(savedUser);
+        verificationTokenRepository.save(verificationToken);
+
+        emailSender.sendVerificationEmail(savedUser.getEmail(), verificationToken.getToken());
 
         // generate response
         String fullName = request.firstName() + " " + request.lastName();
