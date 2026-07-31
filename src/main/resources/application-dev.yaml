@@ -6,6 +6,14 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: username # Solo desarrollo. En prod se inyecta via EMAIL_USERNAME
+    password: password # Solo desarrollo. En prod se inyecta via EMAIL_PASSWORD
+    properties:
+      mail:
+        debug: true
 
 jwt:
   secret: mysecretkey # Solo desarrollo. En prod se inyecta via JWT_SECRET

@@ -10,6 +10,13 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   servlet:
     context-path: /api

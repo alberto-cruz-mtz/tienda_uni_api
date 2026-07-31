@@ -5,6 +5,11 @@ spring:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
   jpa:
     show-sql: false # Apagado para no saturar los logs de producción y mejorar el rendimiento
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
 
 jwt:
   secret: ${JWT_SECRET} # Clave inyectada de forma segura mediante variables de entorno
