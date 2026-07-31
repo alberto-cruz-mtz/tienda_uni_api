@@ -14,6 +14,7 @@ import tienda.uni.api.auth.service.interfaces.EmailSenderService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -37,7 +38,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Override
     @Async("emailExecutor")
-    public void sendVerificationEmail(@NonNull String email, @NonNull String verificationCode) {
+    public void sendVerificationEmail(@NonNull String email, @NonNull UUID verificationCode) {
         //TODO: Cambiar la URL de verificación a la URL de producción cuando se despliegue la aplicación
         String verificationLink = "http://localhost:3000/verify-email?token=" + verificationCode;
 
