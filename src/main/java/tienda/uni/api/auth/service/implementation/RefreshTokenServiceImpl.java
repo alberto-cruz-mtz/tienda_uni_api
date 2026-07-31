@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service;
+package tienda.uni.api.auth.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +8,7 @@ import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
 import tienda.uni.api.auth.persistence.repository.RefreshTokenRepository;
 import tienda.uni.api.auth.persistence.entity.UserEntity;
 import tienda.uni.api.auth.presentation.dto.Tokens;
+import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
 import tienda.uni.api.auth.service.exception.RefreshTokenExpiredException;
 import tienda.uni.api.auth.service.exception.RefreshTokenMissingException;
 import tienda.uni.api.auth.service.exception.RefreshTokenNotFoundException;

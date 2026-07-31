@@ -16,8 +16,8 @@ import tienda.uni.api.auth.presentation.dto.AuthenticationRequest;
 import tienda.uni.api.auth.presentation.dto.AuthenticationResponse;
 import tienda.uni.api.auth.presentation.dto.RegisterRequest;
 import tienda.uni.api.auth.presentation.dto.RegisterResponse;
-import tienda.uni.api.auth.service.AuthenticationService;
-import tienda.uni.api.auth.service.RefreshTokenService;
+import tienda.uni.api.auth.service.interfaces.AuthenticationService;
+import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
 
 import java.util.UUID;
 
