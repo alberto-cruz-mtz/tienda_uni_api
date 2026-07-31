@@ -22,3 +22,6 @@ app:
     allowed-origins: ${FRONTEND_URL}
   url:
     error: ${ERROR_URL}
+  mail:
+    sender:
+      email: ${EMAIL_SENDER} # Dirección de correo del remitente inyectada por Docker

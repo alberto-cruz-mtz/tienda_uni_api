@@ -25,3 +25,6 @@ app:
     allowed-origins: "http://localhost:3000,http://localhost:4200,http://localhost:8080,http://localhost:5173" # Frontends locales comunes
   url:
     error: http://localhost:3000/errors # Redirect local para errores de auth
+  mail:
+    sender:
+      email: no-reply@tiendaun.com

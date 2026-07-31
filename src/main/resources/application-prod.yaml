@@ -21,3 +21,6 @@ app:
     allowed-origins: ${FRONTEND_URL} # Variable de entorno inyectada por Docker
   url:
     error: ${ERROR_URL} # Frontend prod al que se redirige en errores de auth
+  mail:
+    sender:
+      email: ${EMAIL_SENDER} # Dirección de correo del remitente inyectada por Docker
