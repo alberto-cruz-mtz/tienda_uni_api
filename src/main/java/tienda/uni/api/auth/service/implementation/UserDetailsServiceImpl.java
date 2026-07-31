@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service;
+package tienda.uni.api.auth.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;

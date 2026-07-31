@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,10 @@ import tienda.uni.api.auth.presentation.dto.AuthenticationRequest;
 import tienda.uni.api.auth.presentation.dto.AuthenticationResponse;
 import tienda.uni.api.auth.presentation.dto.RegisterRequest;
 import tienda.uni.api.auth.presentation.dto.RegisterResponse;
-import tienda.uni.api.auth.service.AuthenticationService;
+import tienda.uni.api.auth.service.interfaces.AuthenticationService;
+import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,6 +30,7 @@ public class AuthenticationController {
     public boolean IS_COOKIE_SECURE;
 
     private final AuthenticationService authenticationService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {
@@ -79,5 +84,32 @@ public class AuthenticationController {
                 .status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
                 .body(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> refreshToken(@CookieValue(value = "refreshToken") UUID refreshToken) {
+        var tokens = refreshTokenService.renewAccessAndRefreshToken(refreshToken);
+
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", tokens.accessToken())
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE)
+                .path("/api")
+                .maxAge(900) // 15 minutes
+                .sameSite("Strict")
+                .build();
+
+        String newRefreshToken = tokens.refreshToken().toString();
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE)
+                .path("/api/auth/refresh")
+                .maxAge(604800) // 7 days
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
+                .body(null);
     }
 }

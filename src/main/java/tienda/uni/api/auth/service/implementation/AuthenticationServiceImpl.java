@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service;
+package tienda.uni.api.auth.service.implementation;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,8 @@ import tienda.uni.api.auth.presentation.dto.AuthenticationResponse;
 import tienda.uni.api.auth.presentation.dto.RegisterRequest;
 import tienda.uni.api.auth.presentation.dto.RegisterResponse;
 import tienda.uni.api.auth.presentation.dto.UserResponse;
+import tienda.uni.api.auth.service.interfaces.AuthenticationService;
+import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
 import tienda.uni.api.auth.service.exception.EmailAlreadyExistsException;
 import tienda.uni.api.auth.service.exception.EmailDomainNotAllowedException;
 import tienda.uni.api.auth.util.JwtUtil;

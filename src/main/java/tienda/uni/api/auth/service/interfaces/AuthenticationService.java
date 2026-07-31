@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service;
+package tienda.uni.api.auth.service.interfaces;
 
 import tienda.uni.api.auth.presentation.dto.AuthenticationResponse;
 import tienda.uni.api.auth.presentation.dto.RegisterRequest;
