@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #333333;
+            font-size: 24px;
+        }
+
+        .body-content {
+            padding: 20px 0;
+            color: #555555;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .button-wrapper {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background-color: #0056b3;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            margin-top: 20px;
+            border-top: 1px solid #eeeeee;
+            padding-top: 20px;
+        }
+
+        .fallback-link {
+            word-break: break-all;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>Verifica tu cuenta</h1>
+    </div>
+    <div class="body-content">
+        <p>Hola, <strong>{username}</strong>,</p>
+        <p>Gracias por registrarte en nuestra plataforma. Para poder acceder a todas las funciones, necesitamos que
+            confirmes tu dirección de correo electrónico.</p>
+
+        <div class="button-wrapper">
+            <a href="{verification_link}" class="btn" style="color: #ffffff;">Verificar Correo</a>
+        </div>
+
+        <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+        <p><a href="{verification_link}" class="fallback-link">{verification_link}</a></p>
+
+        <p>Si no creaste una cuenta con nosotros, puedes ignorar este correo de forma segura.</p>
+    </div>
+    <div class="footer">
+        <p>&copy; 2026 Tu Empresa. Todos los derechos reservados.</p>
+    </div>
+</div>
+</body>
+</html>
