@@ -10,6 +10,8 @@ spring:
     port: ${EMAIL_PORT}
     username: ${EMAIL_USERNAME}
     password: ${EMAIL_PASSWORD}
+    debug: false
+
 
 jwt:
   secret: ${JWT_SECRET} # Clave inyectada de forma segura mediante variables de entorno

@@ -11,6 +11,7 @@ spring:
     port: 587
     username: ${EMAIL_USERNAME}
     password: ${EMAIL_PASSWORD}
+    debug: false
 
 jwt:
   secret: ${JWT_SECRET}
