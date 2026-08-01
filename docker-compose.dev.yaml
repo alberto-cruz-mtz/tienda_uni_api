@@ -13,6 +13,11 @@ services:
       DB_PORT: 5432
       DB_NAME: tienda_uni
       JWT_SECRET: ${JWT_SECRET}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      EMAIL_SENDER: ${EMAIL_SENDER}
       FRONTEND_URL: ${FRONTEND_URL}
       ERROR_URL: ${ERROR_URL}
     depends_on:
