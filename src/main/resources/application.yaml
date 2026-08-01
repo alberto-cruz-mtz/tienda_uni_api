@@ -11,10 +11,6 @@ spring:
     problemdetails:
       enabled: true
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
     smtp:
       auth: true
       starttls:

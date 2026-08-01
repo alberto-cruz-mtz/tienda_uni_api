@@ -7,8 +7,8 @@ spring:
   jpa:
     show-sql: true
   mail:
-    host: smtp.gmail.com
-    port: 587
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:587}
     username: ${EMAIL_USERNAME}
     password: ${EMAIL_PASSWORD}
     debug: false
@@ -25,4 +25,4 @@ app:
     error: ${ERROR_URL}
   mail:
     sender:
-      email: ${EMAIL_SENDER} # Dirección de correo del remitente inyectada por Docker
+      email: ${EMAIL_SENDER:no-reply@tiendauni.com} # Default sólo para pruebas con Gmail; en prod se inyecta por env
