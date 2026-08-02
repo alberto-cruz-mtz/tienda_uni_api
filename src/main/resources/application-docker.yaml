@@ -6,6 +6,12 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
+  mail:
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:587}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    debug: false
 
 jwt:
   secret: ${JWT_SECRET}
@@ -17,3 +23,6 @@ app:
     allowed-origins: ${FRONTEND_URL}
   url:
     error: ${ERROR_URL}
+  mail:
+    sender:
+      email: ${EMAIL_SENDER:no-reply@tiendauni.com} # Default sólo para pruebas con Gmail; en prod se inyecta por env

@@ -104,6 +104,15 @@ CREATE TABLE IF NOT EXISTS refresh_tokens
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS verification_tokens
+(
+    user_id    UUID        NOT NULL PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
+    token      UUID        NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS salespeople
 (
     user_id           UUID NOT NULL PRIMARY KEY REFERENCES users (id)
