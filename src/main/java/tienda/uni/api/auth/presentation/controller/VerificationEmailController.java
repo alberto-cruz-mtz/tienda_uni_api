@@ -44,23 +44,10 @@ public class VerificationEmailController {
     @GetMapping("/verify-email-status")
     public ResponseEntity<Void> verifyIfEmailAlreadyVerified(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
-        var verificationResponse = verificationEmailService.isEmailVerified(email);
+        var isVerified = verificationEmailService.isEmailVerified(email);
 
-        HttpStatus status = verificationResponse.isVerified() ? HttpStatus.OK : HttpStatus.ACCEPTED;
-        var responseEntity = ResponseEntity.status(status);
+        HttpStatus status = isVerified ? HttpStatus.OK : HttpStatus.ACCEPTED;
 
-        if (verificationResponse.isVerified()) {
-            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
-                    .httpOnly(true)
-                    .secure(IS_COOKIE_SECURE)
-                    .path("/api")
-                    .maxAge(900) // 15 minutes
-                    .sameSite("Strict")
-                    .build();
-
-            responseEntity = responseEntity.header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-        }
-
-        return responseEntity.build();
+        return ResponseEntity.status(status).build();
     }
 }

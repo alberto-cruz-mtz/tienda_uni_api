@@ -4,14 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tienda.uni.api.auth.persistence.entity.UserEntity;
 import tienda.uni.api.auth.persistence.entity.VerificationTokenEntity;
-import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
 import tienda.uni.api.auth.persistence.model.Role;
 import tienda.uni.api.auth.persistence.repository.RoleRepository;
 import tienda.uni.api.auth.persistence.repository.UserRepository;
 import tienda.uni.api.auth.persistence.repository.VerificationTokenRepository;
-import tienda.uni.api.auth.presentation.dto.VerificationEmailCookieResponse;
 import tienda.uni.api.auth.service.exception.UserAlreadyVerifiedException;
 import tienda.uni.api.auth.service.exception.VerificationTokenExpiredException;
 import tienda.uni.api.auth.service.exception.VerificationTokenNotFoundException;
@@ -19,7 +16,6 @@ import tienda.uni.api.auth.service.interfaces.EmailSenderService;
 import tienda.uni.api.auth.service.interfaces.VerificationEmailService;
 import tienda.uni.api.auth.util.JwtUtil;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -82,17 +78,10 @@ public class VerificationEmailServiceImpl implements VerificationEmailService {
     }
 
     @Override
-    public VerificationEmailCookieResponse isEmailVerified(String email) {
+    public boolean isEmailVerified(String email) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "No se encontró un usuario con el correo electrónico proporcionado."));
-
-        if (user.isVerified()) {
-            var userDetails = AuthenticatedUser.fromUserEntity(user);
-            String token = jwtUtil.generateToken(userDetails);
-            return new VerificationEmailCookieResponse(true, token);
-        }
-
-        return new VerificationEmailCookieResponse(false, null);
+        return user.isVerified();
     }
 }

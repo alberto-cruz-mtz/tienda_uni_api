@@ -1,7 +1,5 @@
 package tienda.uni.api.auth.service.interfaces;
 
-import tienda.uni.api.auth.presentation.dto.VerificationEmailCookieResponse;
-
 import java.util.UUID;
 
 public interface VerificationEmailService {
@@ -10,5 +8,5 @@ public interface VerificationEmailService {
 
     void requestNewVerificationEmail(String email);
 
-    VerificationEmailCookieResponse isEmailVerified(String email);
+    boolean isEmailVerified(String email);
 }
