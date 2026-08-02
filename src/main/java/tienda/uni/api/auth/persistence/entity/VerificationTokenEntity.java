@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class VerificationTokenEntity extends AuditableEntity {
     private UUID id;
 
     @MapsId
-    @OneToOne(optional = false, orphanRemoval = true, fetch = FetchType.EAGER, targetEntity = UserEntity.class)
+    @OneToOne(optional = false, orphanRemoval = true, fetch = FetchType.LAZY, targetEntity = UserEntity.class)
     @JoinColumn(nullable = false, name = "user_id")
     private UserEntity user;
 
@@ -51,5 +52,13 @@ public class VerificationTokenEntity extends AuditableEntity {
 
     public boolean isExpired() {
         return Instant.now().isAfter(this.expiresAt);
+    }
+
+    public boolean hasAtLeastFiveMinutesOfLife() {
+        return Duration.between(Instant.now(), this.expiresAt).compareTo(Duration.ofMinutes(5)) >= 0;
+    }
+
+    public void resetExpiresAt() {
+        this.expiresAt = Instant.now().plusSeconds(900);
     }
 }
