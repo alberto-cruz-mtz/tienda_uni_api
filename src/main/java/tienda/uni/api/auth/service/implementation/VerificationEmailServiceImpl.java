@@ -53,8 +53,7 @@ public class VerificationEmailServiceImpl implements VerificationEmailService {
 
         user.setVerified(true);
         var role = roleRepository.findByName(Role.CUSTOMER);
-        user.setRoles(Set.of(role));
-
+        user.getRoles().add(role);
         userRepository.save(user);
     }
 
