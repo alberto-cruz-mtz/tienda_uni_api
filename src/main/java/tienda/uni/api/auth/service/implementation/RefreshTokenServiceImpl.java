@@ -3,6 +3,7 @@ package tienda.uni.api.auth.service.implementation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tienda.uni.api.auth.persistence.entity.RefreshTokenEntity;
 import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
 import tienda.uni.api.auth.persistence.repository.RefreshTokenRepository;
@@ -63,6 +64,24 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         RefreshTokenEntity updatedRefreshToken = repository.save(refreshTokenEntity);
 
         return new Tokens(accessToken, updatedRefreshToken.getToken());
+    }
+
+    @Override
+    @Transactional
+    public void revokeRefreshToken(UUID refreshToken) {
+        if (refreshToken == null) {
+            throw new RefreshTokenMissingException("No se proporcionó el refresh token. Asegúrate de que la cookie esté presente.");
+        }
+
+        var refreshTokenEntity = repository.findByToken(refreshToken)
+                .orElseThrow(() -> new RefreshTokenNotFoundException(
+                        "El Refresh Token proporcionado no esta registrado. Por favor vuelve a iniciar sesión para obtener un nuevo Refresh Token."));
+
+        if (refreshTokenEntity.isRevoked()) {
+            throw new RefreshTokenRevokedException("El Refresh Token proporcionado ya ha sido revocado.");
+        }
+
+        repository.markAsRevokedByToken(refreshToken);
     }
 
     private RefreshTokenEntity buildRefreshToken(UserEntity user) {
