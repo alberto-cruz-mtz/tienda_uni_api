@@ -134,8 +134,8 @@ public class AuthenticationController {
                 .build();
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .noContent()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
-                .body(null);
+                .build();
     }
 }
