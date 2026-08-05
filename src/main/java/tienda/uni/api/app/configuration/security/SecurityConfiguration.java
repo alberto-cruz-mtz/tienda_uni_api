@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                     http.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll();
-                    http.requestMatchers(HttpMethod.POST, "/auth/logout").authenticated();
+                    http.requestMatchers(HttpMethod.POST, "/auth/logout").permitAll();
 
                     http.requestMatchers(HttpMethod.POST, "/auth/verify-email").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/resend-verification").hasAuthority(Role.UNVERIFIED.authority());

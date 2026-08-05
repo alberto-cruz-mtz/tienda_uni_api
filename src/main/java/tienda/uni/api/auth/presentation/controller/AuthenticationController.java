@@ -48,7 +48,7 @@ public class AuthenticationController {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(IS_COOKIE_SECURE)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(604800) // 7 days
                 .sameSite("Strict")
                 .build();
@@ -75,7 +75,7 @@ public class AuthenticationController {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(IS_COOKIE_SECURE)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(604800) // 7 days
                 .sameSite("Strict")
                 .build();
@@ -102,7 +102,7 @@ public class AuthenticationController {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
                 .httpOnly(true)
                 .secure(IS_COOKIE_SECURE)
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(604800) // 7 days
                 .sameSite("Strict")
                 .build();
@@ -111,5 +111,31 @@ public class AuthenticationController {
                 .status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
                 .body(null);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) UUID refreshToken) {
+        refreshTokenService.revokeRefreshToken(refreshToken);
+
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE)
+                .path("/api")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE)
+                .path("/api/auth")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity
+                .noContent()
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
+                .build();
     }
 }

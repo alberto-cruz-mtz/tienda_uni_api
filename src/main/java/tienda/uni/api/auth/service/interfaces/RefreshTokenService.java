@@ -10,4 +10,6 @@ public interface RefreshTokenService {
     UUID generateRefreshToken(UserEntity user);
 
     Tokens renewAccessAndRefreshToken(UUID refreshToken);
+
+    void revokeRefreshToken(UUID refreshToken);
 }
