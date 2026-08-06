@@ -10,7 +10,7 @@ public record S3Properties(
         String secretKey,
         Buckets buckets
 ) {
-    record Buckets(
+    public record Buckets(
             String profilePictures,
             String postMedia
     ) {
