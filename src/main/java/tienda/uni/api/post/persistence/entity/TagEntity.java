@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
+import tienda.uni.api.post.persistence.model.TagName;
 import tienda.uni.api.post.persistence.model.TagType;
 
 @Getter
@@ -26,8 +27,9 @@ public class TagEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", nullable = false, unique = true)
-    private String name;
+    private TagName name;
 
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Enumerated(EnumType.STRING)

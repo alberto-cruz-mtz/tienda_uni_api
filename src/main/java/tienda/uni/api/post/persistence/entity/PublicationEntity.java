@@ -1,5 +1,6 @@
 package tienda.uni.api.post.persistence.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tienda.uni.api.auth.persistence.entity.BuildingEntity;
+import tienda.uni.api.auth.persistence.entity.UserEntity;
 
 import java.time.Instant;
 import java.util.List;
@@ -63,4 +65,8 @@ public class PublicationEntity {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = TagEntity.class)
     @JoinTable(name = "tag_publication", joinColumns = @JoinColumn(name = "publication_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "tag_id", nullable = false))
     private List<TagEntity> tags;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SalePersonEntity.class, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "salesperson_id", nullable = false)
+    private SalePersonEntity salePerson;
 }
