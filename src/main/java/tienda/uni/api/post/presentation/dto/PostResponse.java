@@ -9,8 +9,6 @@ public record PostResponse(
         String title,
         String description,
         List<MediaContentRequest> mediaContent,
-        ProductRequest product,
-        Instant createdAt,
-        Instant updatedAt
+        ProductRequest product
 ) {
 }

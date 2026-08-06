@@ -1,10 +1,13 @@
 package tienda.uni.api.post.presentation.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import tienda.uni.api.post.persistence.model.TagName;
 
+import java.time.Instant;
 import java.util.List;
 
 public record PostRequest(
@@ -21,8 +24,18 @@ public record PostRequest(
         @Size(min = 1, max = 10, message = "El arreglo debe contener entre 1 y 10 elementos.")
         List<MediaContentRequest> mediaContent,
 
+        @NotNull(message = "El arreglo de etiquetas es obligatorio.")
+        @Size(min = 1, max = 5, message = "El arreglo de etiquetas debe contener entre 1 y 5 elementos.")
+        List<TagName> tags,
+
         @Valid
         @NotNull(message = "El producto es obligatorio.")
-        ProductRequest product
+        ProductRequest product,
+
+        @Future(message = "La fecha de ocultación debe ser una fecha futura.")
+        Instant hiddenUntil,
+
+        @NotNull(message = "El campo publishRightAway es obligatorio.")
+        Boolean publishRightAway
 ) {
 }
