@@ -6,6 +6,7 @@ import tienda.uni.api.post.persistence.entity.ProductEntity;
 import tienda.uni.api.post.persistence.entity.PublicationEntity;
 import tienda.uni.api.post.persistence.entity.PublicationMediaEntity;
 import tienda.uni.api.post.persistence.entity.SalePersonEntity;
+import tienda.uni.api.post.persistence.entity.TagEntity;
 import tienda.uni.api.post.persistence.repository.ProductRepository;
 import tienda.uni.api.post.persistence.repository.PublicationMediaRepository;
 import tienda.uni.api.post.persistence.repository.PublicationRepository;
@@ -74,10 +75,13 @@ public class PostServiceImpl implements PostService {
 
         publicationMediaRepository.saveAll(mediaContent);
 
+        var tagNames = tags.stream().map(TagEntity::getName).toList();
+
         return new PostResponse(
                 savedPublication.getId(),
                 savedPublication.getTitle(),
                 savedPublication.getDescription(),
+                tagNames,
                 request.mediaContent(),
                 request.product()
         );
