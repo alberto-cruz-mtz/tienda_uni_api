@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ public class ProductEntity {
     @Column(name = "publication_id")
     private UUID id;
 
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false, targetEntity = PublicationEntity.class)
     @JoinColumn(name = "publication_id", nullable = false, unique = true)
     private PublicationEntity publication;

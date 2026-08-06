@@ -66,7 +66,7 @@ public class PublicationEntity {
     @JoinTable(name = "tag_publication", joinColumns = @JoinColumn(name = "publication_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "tag_id", nullable = false))
     private List<TagEntity> tags;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SalePersonEntity.class, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SalePersonEntity.class, optional = false)
     @JoinColumn(name = "salesperson_id", nullable = false)
     private SalePersonEntity salePerson;
 }
