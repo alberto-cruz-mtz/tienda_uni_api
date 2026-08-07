@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
@@ -49,11 +50,13 @@ public class PostController {
     @GetMapping
     public ResponseEntity<DataResponse<PostResponse>> getPosts(
             @AuthenticationPrincipal AuthenticatedUser userDetails,
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "isOutOfStock", required = false, defaultValue = "false") boolean isOutOfStock,
             @PageableDefault(sort = "postedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         UUID universityId = userDetails.getUniversityId();
 
-        var response = postService.getAllPosts(pageable, universityId);
+        var response = postService.getAllPosts(pageable, universityId, search, isOutOfStock);
 
         return ResponseEntity.ok(response);
     }
