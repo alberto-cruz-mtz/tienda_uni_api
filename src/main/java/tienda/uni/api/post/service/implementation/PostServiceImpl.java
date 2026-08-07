@@ -106,8 +106,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public DataResponse<PostResponse> getAllPosts(Pageable pageable, UUID universityId) {
-        var publications = publicationRepository.findAllBySalePerson_User_University_Id(universityId, pageable);
+    public DataResponse<PostResponse> getAllPosts(Pageable pageable, UUID universityId, String search, boolean isOutOfStock) {
+        var specification = Specification
+                .where(PostSpecification.fetchRelations())
+                .and(PostSpecification.getOnlyPublicationsByUniversity(universityId))
+                // TODO: cambiar esos valores por los que vienen en el request, se deja asi para comprobar el correcto funcionamiento de la paginacion y el filtrado
+                .and(PostSpecification.searchByTitle(search))
+                .and(PostSpecification.filterByStock(isOutOfStock));
+
+        var publications = publicationRepository.findAll(specification, pageable);
 
         var nextLink = publications.hasNext() ? "/posts?page=" + (publications.getNumber() + 1) : null;
 

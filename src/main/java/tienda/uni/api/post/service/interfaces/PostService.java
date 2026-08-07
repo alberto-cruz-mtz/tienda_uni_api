@@ -11,5 +11,5 @@ public interface PostService {
 
     PostResponse createPost(PostRequest postRequest, UUID userId);
 
-    DataResponse<PostResponse> getAllPosts(Pageable pageable, UUID universityId);
+    DataResponse<PostResponse> getAllPosts(Pageable pageable, UUID universityId, String search, boolean isOutOfStock);
 }
