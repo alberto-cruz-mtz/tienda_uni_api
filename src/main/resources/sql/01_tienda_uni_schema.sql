@@ -117,10 +117,10 @@ CREATE TABLE IF NOT EXISTS publications
     title          VARCHAR(80)  NOT NULL,
     description    VARCHAR(255) NOT NULL,
     -- fecha en que es posteada o reposteada
-    posted_at      TIMESTAMPTZ  NOT NULL,
+    posted_at      TIMESTAMPTZ,
     -- fecha de creacion de la publicacion
     created_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    expires_at     TIMESTAMPTZ  NOT NULL,
+    expires_at     TIMESTAMPTZ,
     salesperson_id UUID         NOT NULL REFERENCES salespeople (user_id) ON DELETE CASCADE,
     -- ID del edificio donde se encuentra el vendedor con el producto, puede actualizarse si el vendedor se mueve a otro edificio, para que los compradores puedan ver la ubicación actual del vendedor
     building_id    UUID REFERENCES buildings (id) ON DELETE NO ACTION
@@ -141,8 +141,8 @@ CREATE TABLE IF NOT EXISTS products
 (
     publication_id UUID           NOT NULL PRIMARY KEY REFERENCES publications (id)
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    sale_price     NUMERIC(10, 9) NOT NULL,
-    inventory      NUMERIC(10, 8),
+    sale_price     NUMERIC(10, 2) NOT NULL,
+    inventory      NUMERIC(10, 3),
     type_sale      SALETYPE       NOT NULL,
     allows_layaway BOOLEAN        NOT NULL DEFAULT FALSE,
     is_active      BOOLEAN        NOT NULL DEFAULT TRUE
