@@ -12,6 +12,7 @@ public record PostResponse(
         String description,
         List<TagName> tags,
         List<MediaContentRequest> mediaContent,
-        ProductRequest product
+        ProductResponse product,
+        Instant postedAt
 ) {
 }
