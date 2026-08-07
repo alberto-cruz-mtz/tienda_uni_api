@@ -23,6 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tienda.uni.api.app.configuration.security.filter.JwtAuthenticationFilter;
+import tienda.uni.api.auth.persistence.model.Role;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +53,9 @@ public class SecurityConfiguration {
                     http.requestMatchers(HttpMethod.POST, "/auth/send-verification-email").hasAuthority("UNVERIFIED");
 
                     http.requestMatchers("/actuator/**").permitAll();
+
+                    http.requestMatchers(HttpMethod.POST, "/posts").hasRole(Role.SELLER.name());
+                    http.requestMatchers(HttpMethod.GET, "/posts").hasRole(Role.CUSTOMER.name());
 
                     http.anyRequest().denyAll();
                 })
