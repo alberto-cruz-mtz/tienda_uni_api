@@ -12,6 +12,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,4 +70,7 @@ public class PublicationEntity {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = SalePersonEntity.class, optional = false)
     @JoinColumn(name = "salesperson_id", nullable = false)
     private SalePersonEntity salePerson;
+
+    @OneToOne(mappedBy = "publication", targetEntity = ProductEntity.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductEntity product;
 }
