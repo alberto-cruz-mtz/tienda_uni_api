@@ -53,6 +53,10 @@ public class SecurityConfiguration {
                     http.requestMatchers(HttpMethod.POST, "/auth/resend-verification").hasAuthority(Role.UNVERIFIED.authority());
                     http.requestMatchers(HttpMethod.GET, "/auth/verify-email-status").hasAuthority(Role.UNVERIFIED.authority());
 
+                    http.requestMatchers(HttpMethod.GET, "/posts").hasRole(Role.CUSTOMER.name());
+                    http.requestMatchers(HttpMethod.GET, "/posts/{id}").hasRole(Role.CUSTOMER.name());
+                    http.requestMatchers(HttpMethod.POST, "/posts").hasRole(Role.SELLER.name());
+
                     http.requestMatchers("/actuator/**").permitAll();
 
                     http.anyRequest().denyAll();
