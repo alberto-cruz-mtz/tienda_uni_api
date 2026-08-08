@@ -104,6 +104,15 @@ CREATE TABLE IF NOT EXISTS refresh_tokens
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS verification_tokens
+(
+    user_id    UUID        NOT NULL PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
+    token      UUID        NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS salespeople
 (
     user_id           UUID NOT NULL PRIMARY KEY REFERENCES users (id)
@@ -142,7 +151,7 @@ CREATE TABLE IF NOT EXISTS products
     publication_id UUID           NOT NULL PRIMARY KEY REFERENCES publications (id)
         ON UPDATE NO ACTION ON DELETE CASCADE,
     sale_price     NUMERIC(10, 2) NOT NULL,
-    inventory      NUMERIC(10, 3),
+    inventory      NUMERIC(10, 2) NOT NULL DEFAULT 0,
     type_sale      SALETYPE       NOT NULL,
     allows_layaway BOOLEAN        NOT NULL DEFAULT FALSE,
     is_active      BOOLEAN        NOT NULL DEFAULT TRUE
@@ -242,7 +251,7 @@ CREATE TABLE IF NOT EXISTS layaway_product
         ON UPDATE NO ACTION ON DELETE NO ACTION,
     product_id UUID NOT NULL REFERENCES products (publication_id)
         ON UPDATE NO ACTION ON DELETE NO ACTION,
-    quantity   DECIMAL
+    quantity   DECIMAL(10, 2) NOT NULL DEFAULT 0
 );
 
 CREATE TYPE NotificationType AS ENUM (
