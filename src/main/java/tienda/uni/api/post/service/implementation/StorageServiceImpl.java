@@ -9,11 +9,15 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import tienda.uni.api.post.configuration.S3Properties;
+import tienda.uni.api.post.presentation.dto.BatchUploadRequest;
+import tienda.uni.api.post.presentation.dto.BatchUploadResponse;
+import tienda.uni.api.post.presentation.dto.PresignedUrlItem;
 import tienda.uni.api.post.presentation.dto.UploadRequest;
 import tienda.uni.api.post.service.interfaces.StorageService;
 import tienda.uni.api.post.service.interfaces.UploadTarget;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -46,5 +50,37 @@ public class StorageServiceImpl implements StorageService {
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
 
         return presignedRequest.url().toString();
+    }
+
+    @Override
+    public BatchUploadResponse presignBatchUpload(UploadTarget target, BatchUploadRequest request) {
+        String bucketName = switch (target) {
+            case PROFILE_PICTURE -> properties.buckets().profilePictures();
+            case PUBLICATION_MEDIA -> properties.buckets().postMedia();
+        };
+
+        List<PresignedUrlItem> presignedUrlItems = request.files().stream()
+                .map(file -> {
+                    String uniqueFileName = UUID.randomUUID() + "-" + file.fileName();
+
+                    PutObjectRequest objectRequest = PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(uniqueFileName)
+                            .contentType(file.contentType())
+                            .build();
+
+                    PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                            .signatureDuration(Duration.ofMinutes(5))
+                            .putObjectRequest(objectRequest)
+                            .build();
+
+                    PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+
+                    String uploadUrl = presignedRequest.url().toString();
+
+                    return new PresignedUrlItem(file.fileId(), uploadUrl, uniqueFileName);
+                }).toList();
+
+        return new BatchUploadResponse(presignedUrlItems);
     }
 }
