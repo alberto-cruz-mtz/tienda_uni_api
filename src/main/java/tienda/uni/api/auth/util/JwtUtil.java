@@ -13,6 +13,7 @@ import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
 import tienda.uni.api.auth.service.exception.InvalidAccessTokenException;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Component
 public class JwtUtil {
@@ -32,6 +33,7 @@ public class JwtUtil {
         String subject = user.getUsername();
         String authorities = user.joinedAuthorities();
         String userId = user.getUser().getId().toString();
+        String universityId = user.getUser().getUniversity().getId().toString();
         Instant now = Instant.now();
 
         return JWT.create()
@@ -41,6 +43,7 @@ public class JwtUtil {
                 .withNotBefore(now)
                 .withIssuedAt(now)
                 .withClaim("userId", userId)
+                .withClaim("universityId", universityId)
                 .withClaim("authorities", authorities)
                 .sign(algorithm);
     }
@@ -63,5 +66,13 @@ public class JwtUtil {
 
     public UserDetails getUserDetailsFromToken(DecodedJWT decodedJWT) {
         return AuthenticatedUser.fromToken(decodedJWT);
+    }
+
+    public static UUID getUserIdFromToken(DecodedJWT decodedJWT) {
+        return UUID.fromString(decodedJWT.getClaim("userId").asString());
+    }
+
+    public static UUID getUniversityIdFromToken(DecodedJWT decodedJWT) {
+        return UUID.fromString(decodedJWT.getClaim("universityId").asString());
     }
 }

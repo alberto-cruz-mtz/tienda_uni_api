@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import tienda.uni.api.auth.persistence.entity.UserEntity;
+import tienda.uni.api.auth.util.JwtUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,9 @@ public class AuthenticatedUser implements UserDetails {
     private boolean enabled;
     private Collection<? extends GrantedAuthority> authorities;
 
+    private UUID userId;
+    private UUID universityId;
+
     private UserEntity user;
 
     public static AuthenticatedUser fromUserEntity(UserEntity user) {
@@ -44,6 +48,8 @@ public class AuthenticatedUser implements UserDetails {
                 .forEach(authorities::add);
 
         return AuthenticatedUser.builder()
+                .userId(user.getId())
+                .universityId(user.getUniversity().getId())
                 .username(user.getEmail())
                 .password(user.getPassword())
                 .enabled(true)
@@ -60,7 +66,8 @@ public class AuthenticatedUser implements UserDetails {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        UUID userId = UUID.fromString(decodedJWT.getClaim("userId").asString());
+        UUID userId = JwtUtil.getUserIdFromToken(decodedJWT);
+        UUID universityId = JwtUtil.getUniversityIdFromToken(decodedJWT);
         UserEntity user = UserEntity.builder()
                 .id(userId)
                 .build();
@@ -68,6 +75,8 @@ public class AuthenticatedUser implements UserDetails {
         return AuthenticatedUser.builder()
                 .username(username)
                 .authorities(authorities)
+                .userId(user.getId())
+                .universityId(universityId)
                 .user(user)
                 .build();
     }
