@@ -15,10 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
+import tienda.uni.api.post.presentation.dto.BatchUploadRequest;
+import tienda.uni.api.post.presentation.dto.BatchUploadResponse;
 import tienda.uni.api.post.presentation.dto.DataResponse;
 import tienda.uni.api.post.presentation.dto.PostRequest;
 import tienda.uni.api.post.presentation.dto.PostResponse;
 import tienda.uni.api.post.service.interfaces.PostService;
+import tienda.uni.api.post.service.interfaces.StorageService;
+import tienda.uni.api.post.service.interfaces.UploadTarget;
 
 import java.net.URI;
 import java.util.UUID;
@@ -29,6 +33,7 @@ import java.util.UUID;
 public class PostController {
 
     private final PostService postService;
+    private final StorageService storageService;
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(
@@ -58,6 +63,12 @@ public class PostController {
 
         var response = postService.getAllPosts(pageable, universityId, search, isOutOfStock);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/presigned-urls")
+    public ResponseEntity<BatchUploadResponse> getPresignedUrlForMediaPublication(@RequestBody @Valid BatchUploadRequest request) {
+        var response = storageService.presignBatchUpload(UploadTarget.PUBLICATION_MEDIA, request);
         return ResponseEntity.ok(response);
     }
 }
