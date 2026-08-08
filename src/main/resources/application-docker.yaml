@@ -26,3 +26,13 @@ app:
   mail:
     sender:
       email: ${EMAIL_SENDER:no-reply@tiendauni.com} # Default sólo para pruebas con Gmail; en prod se inyecta por env
+
+aws:
+  s3:
+    region: ${AWS_REGION:us-east-1}
+    endpoint: ${AWS_S3_ENDPOINT:http://localhost:9000}
+    access-key: ${AWS_ACCESS_KEY:your-access-key}
+    secret-key: ${AWS_SECRET_KEY:your-secret-key}
+    buckets:
+      profile-pictures: ${AWS_S3_BUCKET_PROFILE_PICTURES:avatars}
+      post-media: ${AWS_S3_BUCKET_POST_MEDIA:publication-media}

@@ -26,3 +26,13 @@ app:
   mail:
     sender:
       email: ${EMAIL_SENDER} # Dirección de correo del remitente inyectada por Docker
+
+aws:
+  s3:
+    region: ${AWS_REGION}
+    endpoint: ${AWS_S3_ENDPOINT}
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    buckets:
+      profile-pictures: ${AWS_S3_BUCKET_PROFILE_PICTURES}
+      post-media: ${AWS_S3_BUCKET_POST_MEDIA}
