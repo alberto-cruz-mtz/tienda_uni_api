@@ -153,4 +153,31 @@ public class PostServiceImpl implements PostService {
 
         return new DataResponse<>(pagination, posts);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostResponse getPostById(UUID id, UUID universityId) {
+        var publication = publicationRepository.findByIdAndUniversityId(id, universityId)
+                .orElseThrow(() -> new RuntimeException("publication not found"));
+
+        return new PostResponse(
+                publication.getId(),
+                publication.getTitle(),
+                publication.getDescription(),
+                publication.getTags().stream().map(TagEntity::getName).toList(),
+                publication.getMedia().stream().map(media -> new MediaContentRequest(
+                        media.getMediaUrl(),
+                        media.getMediaType(),
+                        media.getDisplayOrder()
+                )).toList(),
+                new ProductResponse(
+                        publication.getProduct().getInventory().intValue(),
+                        publication.getProduct().getSalePrice().doubleValue(),
+                        publication.getProduct().getSaleType(),
+                        publication.getProduct().isAllowsLayaway(),
+                        publication.getProduct().getInventory().compareTo(BigDecimal.ZERO) == 0
+                ),
+                publication.getPostedAt()
+        );
+    }
 }
