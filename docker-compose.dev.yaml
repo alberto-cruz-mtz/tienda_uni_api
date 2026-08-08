@@ -7,19 +7,30 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      # Variables de entorno para la configuración de JPA
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: ${DB_PORT:5432}
       DB_NAME: tienda_uni
+      # Variables de entorno para la configuración de JWT
       JWT_SECRET: ${JWT_SECRET}
+      # Variables de entorno para la configuración de correo
       EMAIL_HOST: ${EMAIL_HOST}
       EMAIL_PORT: ${EMAIL_PORT}
       EMAIL_USERNAME: ${EMAIL_USERNAME}
       EMAIL_PASSWORD: ${EMAIL_PASSWORD}
       EMAIL_SENDER: ${EMAIL_SENDER}
+      # Variables de entorno para la configuración de CORS y URLs
       FRONTEND_URL: ${FRONTEND_URL}
       ERROR_URL: ${ERROR_URL}
+      # Variables de entorno para la configuración de AWS S3
+      AWS_REGION: ${AWS_REGION}
+      AWS_S3_ENDPOINT: ${AWS_S3_ENDPOINT}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_S3_BUCKET_PROFILE_PICTURES: ${AWS_S3_BUCKET_PROFILE_PICTURES}
+      AWS_S3_BUCKET_POST_MEDIA: ${AWS_S3_BUCKET_POST_MEDIA}
     depends_on:
       postgres:
         condition: service_healthy
