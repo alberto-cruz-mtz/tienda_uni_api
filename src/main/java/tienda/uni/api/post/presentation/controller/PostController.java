@@ -19,6 +19,7 @@ import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
 import tienda.uni.api.post.presentation.dto.BatchUploadRequest;
 import tienda.uni.api.post.presentation.dto.BatchUploadResponse;
 import tienda.uni.api.post.presentation.dto.DataResponse;
+import tienda.uni.api.post.presentation.dto.PostParams;
 import tienda.uni.api.post.presentation.dto.PostRequest;
 import tienda.uni.api.post.presentation.dto.PostResponse;
 import tienda.uni.api.post.service.interfaces.PostService;
@@ -62,7 +63,8 @@ public class PostController {
 
         UUID universityId = userDetails.getUniversityId();
 
-        var response = postService.getAllPosts(pageable, universityId, search, isOutOfStock);
+        PostParams postParams = new PostParams(pageable, universityId, search, isOutOfStock);
+        var response = postService.getAllPosts(postParams);
 
         return ResponseEntity.ok(response);
     }
