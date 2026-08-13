@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service.exception;
+package tienda.uni.api.service.exception;
 
 public class VerificationTokenExpiredException extends RuntimeException {
     public VerificationTokenExpiredException(String message) {

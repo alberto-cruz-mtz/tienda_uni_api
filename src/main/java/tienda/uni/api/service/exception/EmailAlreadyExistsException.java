@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service.exception;
+package tienda.uni.api.service.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     public EmailAlreadyExistsException(String message) {
