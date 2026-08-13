@@ -1,4 +1,4 @@
-package tienda.uni.api.post.service.interfaces;
+package tienda.uni.api.service.interfaces;
 
 public enum UploadTarget {
 	PUBLICATION_MEDIA,

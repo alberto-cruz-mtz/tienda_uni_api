@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service.interfaces;
+package tienda.uni.api.service.interfaces;
 
 import java.util.UUID;
 

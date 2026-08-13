@@ -1,7 +1,7 @@
-package tienda.uni.api.auth.service.interfaces;
+package tienda.uni.api.service.interfaces;
 
-import tienda.uni.api.auth.persistence.entity.UserEntity;
-import tienda.uni.api.auth.presentation.dto.Tokens;
+import tienda.uni.api.persistence.entity.UserEntity;
+import tienda.uni.api.presentation.dto.Tokens;
 
 import java.util.UUID;
 
