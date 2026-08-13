@@ -1,11 +1,11 @@
-package tienda.uni.api.auth.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record AuthenticationResponse(
+public record RegisterResponse(
         UUID id,
         UserResponse user,
         boolean isVerified,

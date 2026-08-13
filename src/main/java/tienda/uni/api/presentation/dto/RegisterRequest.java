@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package tienda.uni.api.post.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMax;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 
-import tienda.uni.api.post.persistence.model.SaleType;
+import tienda.uni.api.persistence.model.SaleType;
 
 public record ProductRequest(
         @NotNull(message = "La cantidad es obligatoria.")

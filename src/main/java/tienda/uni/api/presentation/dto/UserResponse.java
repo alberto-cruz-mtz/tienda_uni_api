@@ -1,8 +1,8 @@
-package tienda.uni.api.auth.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import tienda.uni.api.auth.persistence.entity.BuildingEntity;
-import tienda.uni.api.auth.persistence.entity.ProfileEntity;
+import tienda.uni.api.persistence.entity.BuildingEntity;
+import tienda.uni.api.persistence.entity.ProfileEntity;
 
 import java.util.Optional;
 

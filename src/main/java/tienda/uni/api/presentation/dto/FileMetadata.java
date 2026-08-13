@@ -1,4 +1,4 @@
-package tienda.uni.api.post.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;

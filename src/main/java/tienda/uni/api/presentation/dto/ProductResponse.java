@@ -1,6 +1,6 @@
-package tienda.uni.api.post.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
-import tienda.uni.api.post.persistence.model.SaleType;
+import tienda.uni.api.persistence.model.SaleType;
 
 public record ProductResponse(
         Integer quantity,

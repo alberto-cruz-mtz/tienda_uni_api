@@ -1,4 +1,4 @@
-package tienda.uni.api.app.dto;
+package tienda.uni.api.presentation.dto;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

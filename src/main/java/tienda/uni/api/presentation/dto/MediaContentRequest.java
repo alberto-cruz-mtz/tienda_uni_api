@@ -1,4 +1,4 @@
-package tienda.uni.api.post.presentation.dto;
+package tienda.uni.api.presentation.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
 
-import tienda.uni.api.post.persistence.model.MediaType;
+import tienda.uni.api.persistence.model.MediaType;
 
 public record MediaContentRequest(
         @NotBlank(message = "La URL es obligatoria.")
