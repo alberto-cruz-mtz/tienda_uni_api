@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service.implementation;
+package tienda.uni.api.service.implementation;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -10,7 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import tienda.uni.api.auth.service.interfaces.EmailSenderService;
+import tienda.uni.api.service.interfaces.EmailSenderService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

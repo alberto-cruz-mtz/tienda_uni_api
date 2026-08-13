@@ -1,20 +1,20 @@
-package tienda.uni.api.auth.service.implementation;
+package tienda.uni.api.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tienda.uni.api.auth.persistence.entity.VerificationTokenEntity;
-import tienda.uni.api.auth.persistence.model.Role;
-import tienda.uni.api.auth.persistence.repository.RoleRepository;
-import tienda.uni.api.auth.persistence.repository.UserRepository;
-import tienda.uni.api.auth.persistence.repository.VerificationTokenRepository;
-import tienda.uni.api.auth.service.exception.UserAlreadyVerifiedException;
-import tienda.uni.api.auth.service.exception.VerificationTokenExpiredException;
-import tienda.uni.api.auth.service.exception.VerificationTokenNotFoundException;
-import tienda.uni.api.auth.service.interfaces.EmailSenderService;
-import tienda.uni.api.auth.service.interfaces.VerificationEmailService;
-import tienda.uni.api.auth.util.JwtUtil;
+import tienda.uni.api.persistence.entity.VerificationTokenEntity;
+import tienda.uni.api.persistence.model.Role;
+import tienda.uni.api.persistence.repository.RoleRepository;
+import tienda.uni.api.persistence.repository.UserRepository;
+import tienda.uni.api.persistence.repository.VerificationTokenRepository;
+import tienda.uni.api.service.exception.UserAlreadyVerifiedException;
+import tienda.uni.api.service.exception.VerificationTokenExpiredException;
+import tienda.uni.api.service.exception.VerificationTokenNotFoundException;
+import tienda.uni.api.service.interfaces.EmailSenderService;
+import tienda.uni.api.service.interfaces.VerificationEmailService;
+import tienda.uni.api.util.JwtUtil;
 
 import java.util.UUID;
 

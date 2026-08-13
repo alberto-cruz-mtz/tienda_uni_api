@@ -1,4 +1,4 @@
-package tienda.uni.api.post.service.implementation;
+package tienda.uni.api.service.implementation;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -7,14 +7,14 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
-import tienda.uni.api.post.configuration.S3Properties;
-import tienda.uni.api.post.presentation.dto.BatchUploadRequest;
-import tienda.uni.api.post.presentation.dto.BatchUploadResponse;
-import tienda.uni.api.post.presentation.dto.FileMetadata;
-import tienda.uni.api.post.presentation.dto.PresignedUrlItem;
-import tienda.uni.api.post.presentation.dto.UploadRequest;
-import tienda.uni.api.post.service.interfaces.StorageService;
-import tienda.uni.api.post.service.interfaces.UploadTarget;
+import tienda.uni.api.configuration.S3Properties;
+import tienda.uni.api.presentation.dto.BatchUploadRequest;
+import tienda.uni.api.presentation.dto.BatchUploadResponse;
+import tienda.uni.api.presentation.dto.FileMetadata;
+import tienda.uni.api.presentation.dto.PresignedUrlItem;
+import tienda.uni.api.presentation.dto.UploadRequest;
+import tienda.uni.api.service.interfaces.StorageService;
+import tienda.uni.api.service.interfaces.UploadTarget;
 
 import java.time.Duration;
 import java.util.List;

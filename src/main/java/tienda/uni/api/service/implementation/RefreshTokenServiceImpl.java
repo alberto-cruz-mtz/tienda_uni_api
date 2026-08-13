@@ -1,20 +1,20 @@
-package tienda.uni.api.auth.service.implementation;
+package tienda.uni.api.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tienda.uni.api.auth.persistence.entity.RefreshTokenEntity;
-import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
-import tienda.uni.api.auth.persistence.repository.RefreshTokenRepository;
-import tienda.uni.api.auth.persistence.entity.UserEntity;
-import tienda.uni.api.auth.presentation.dto.Tokens;
-import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
-import tienda.uni.api.auth.service.exception.RefreshTokenExpiredException;
-import tienda.uni.api.auth.service.exception.RefreshTokenMissingException;
-import tienda.uni.api.auth.service.exception.RefreshTokenNotFoundException;
-import tienda.uni.api.auth.service.exception.RefreshTokenRevokedException;
-import tienda.uni.api.auth.util.JwtUtil;
+import tienda.uni.api.persistence.entity.RefreshTokenEntity;
+import tienda.uni.api.persistence.model.AuthenticatedUser;
+import tienda.uni.api.persistence.repository.RefreshTokenRepository;
+import tienda.uni.api.persistence.entity.UserEntity;
+import tienda.uni.api.presentation.dto.Tokens;
+import tienda.uni.api.service.interfaces.RefreshTokenService;
+import tienda.uni.api.service.exception.RefreshTokenExpiredException;
+import tienda.uni.api.service.exception.RefreshTokenMissingException;
+import tienda.uni.api.service.exception.RefreshTokenNotFoundException;
+import tienda.uni.api.service.exception.RefreshTokenRevokedException;
+import tienda.uni.api.util.JwtUtil;
 
 import java.time.Instant;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.service.implementation;
+package tienda.uni.api.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
-import tienda.uni.api.auth.persistence.repository.UserRepository;
+import tienda.uni.api.persistence.model.AuthenticatedUser;
+import tienda.uni.api.persistence.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
