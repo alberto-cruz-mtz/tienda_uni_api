@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.persistence.model;
+package tienda.uni.api.persistence.model;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.AllArgsConstructor;
@@ -9,8 +9,8 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import tienda.uni.api.auth.persistence.entity.UserEntity;
-import tienda.uni.api.auth.util.JwtUtil;
+import tienda.uni.api.persistence.entity.UserEntity;
+import tienda.uni.api.util.JwtUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

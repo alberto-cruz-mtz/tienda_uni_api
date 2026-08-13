@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.persistence.model;
+package tienda.uni.api.persistence.model;
 
 public enum Permission {
     READ_SALES_POST,
