@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.presentation.controller;
+package tienda.uni.api.presentation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import tienda.uni.api.auth.presentation.dto.AuthenticationRequest;
-import tienda.uni.api.auth.presentation.dto.AuthenticationResponse;
-import tienda.uni.api.auth.presentation.dto.RegisterRequest;
-import tienda.uni.api.auth.presentation.dto.RegisterResponse;
-import tienda.uni.api.auth.service.interfaces.AuthenticationService;
-import tienda.uni.api.auth.service.interfaces.RefreshTokenService;
+import tienda.uni.api.presentation.dto.AuthenticationRequest;
+import tienda.uni.api.presentation.dto.AuthenticationResponse;
+import tienda.uni.api.presentation.dto.RegisterRequest;
+import tienda.uni.api.presentation.dto.RegisterResponse;
+import tienda.uni.api.service.interfaces.AuthenticationService;
+import tienda.uni.api.service.interfaces.RefreshTokenService;
 
 import java.util.UUID;
 

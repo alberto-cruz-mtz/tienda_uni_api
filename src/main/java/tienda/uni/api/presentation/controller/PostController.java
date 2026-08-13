@@ -1,4 +1,4 @@
-package tienda.uni.api.post.presentation.controller;
+package tienda.uni.api.presentation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
-import tienda.uni.api.post.presentation.dto.BatchUploadRequest;
-import tienda.uni.api.post.presentation.dto.BatchUploadResponse;
-import tienda.uni.api.post.presentation.dto.DataResponse;
-import tienda.uni.api.post.presentation.dto.PostParams;
-import tienda.uni.api.post.presentation.dto.PostRequest;
-import tienda.uni.api.post.presentation.dto.PostResponse;
-import tienda.uni.api.post.service.interfaces.PostService;
-import tienda.uni.api.post.service.interfaces.StorageService;
-import tienda.uni.api.post.service.interfaces.UploadTarget;
+import tienda.uni.api.persistence.model.AuthenticatedUser;
+import tienda.uni.api.presentation.dto.BatchUploadRequest;
+import tienda.uni.api.presentation.dto.BatchUploadResponse;
+import tienda.uni.api.presentation.dto.DataResponse;
+import tienda.uni.api.presentation.dto.PostParams;
+import tienda.uni.api.presentation.dto.PostRequest;
+import tienda.uni.api.presentation.dto.PostResponse;
+import tienda.uni.api.service.interfaces.PostService;
+import tienda.uni.api.service.interfaces.StorageService;
+import tienda.uni.api.service.interfaces.UploadTarget;
 
 import java.net.URI;
 import java.util.UUID;
