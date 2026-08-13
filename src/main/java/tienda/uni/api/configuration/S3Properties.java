@@ -1,4 +1,4 @@
-package tienda.uni.api.post.configuration;
+package tienda.uni.api.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

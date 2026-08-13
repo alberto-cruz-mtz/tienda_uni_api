@@ -1,4 +1,4 @@
-package tienda.uni.api.app.configuration;
+package tienda.uni.api.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
