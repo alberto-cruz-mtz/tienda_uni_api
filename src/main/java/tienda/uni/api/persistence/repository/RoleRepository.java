@@ -1,8 +1,8 @@
-package tienda.uni.api.auth.persistence.repository;
+package tienda.uni.api.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tienda.uni.api.auth.persistence.entity.RoleEntity;
-import tienda.uni.api.auth.persistence.model.Role;
+import tienda.uni.api.persistence.entity.RoleEntity;
+import tienda.uni.api.persistence.model.Role;
 
 public interface RoleRepository extends JpaRepository<RoleEntity, Integer> {
 

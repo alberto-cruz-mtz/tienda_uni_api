@@ -1,7 +1,7 @@
-package tienda.uni.api.post.persistence.repository;
+package tienda.uni.api.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tienda.uni.api.post.persistence.entity.SalePersonEntity;
+import tienda.uni.api.persistence.entity.SalePersonEntity;
 
 import java.util.UUID;
 

@@ -1,9 +1,9 @@
-package tienda.uni.api.auth.persistence.repository;
+package tienda.uni.api.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import tienda.uni.api.auth.persistence.entity.RefreshTokenEntity;
+import tienda.uni.api.persistence.entity.RefreshTokenEntity;
 
 import java.util.Optional;
 import java.util.UUID;

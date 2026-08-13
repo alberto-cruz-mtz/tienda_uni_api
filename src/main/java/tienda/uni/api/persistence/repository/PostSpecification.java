@@ -1,9 +1,8 @@
-package tienda.uni.api.post.persistence.repository;
+package tienda.uni.api.persistence.repository;
 
 import jakarta.persistence.criteria.JoinType;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
-import tienda.uni.api.post.persistence.entity.PublicationEntity;
+import tienda.uni.api.persistence.entity.PublicationEntity;
 
 import java.util.UUID;
 
