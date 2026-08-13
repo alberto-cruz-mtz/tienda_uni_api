@@ -1,4 +1,4 @@
-package tienda.uni.api.post.persistence.entity;
+package tienda.uni.api.persistence.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
-import tienda.uni.api.post.persistence.model.MediaType;
+import tienda.uni.api.persistence.model.MediaType;
 
 @Setter
 @Getter

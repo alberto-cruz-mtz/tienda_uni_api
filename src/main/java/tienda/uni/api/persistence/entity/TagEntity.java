@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.persistence.entity;
+package tienda.uni.api.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,22 +11,28 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import tienda.uni.api.auth.persistence.model.Permission;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
+import tienda.uni.api.persistence.model.TagName;
+import tienda.uni.api.persistence.model.TagType;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "permissions")
-public class PermissionEntity {
+@Table(name = "tags")
+public class TagEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false, unique = true, length = 50)
-    private Permission name;
+    @Column(name = "name", nullable = false, unique = true)
+    private TagName name;
+
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private TagType type;
 }

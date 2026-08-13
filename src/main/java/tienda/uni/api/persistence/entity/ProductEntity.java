@@ -1,4 +1,4 @@
-package tienda.uni.api.post.persistence.entity;
+package tienda.uni.api.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
-import tienda.uni.api.post.persistence.model.SaleType;
+import tienda.uni.api.persistence.model.SaleType;
 
 import java.math.BigDecimal;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.persistence.entity;
+package tienda.uni.api.persistence.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

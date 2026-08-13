@@ -1,4 +1,4 @@
-package tienda.uni.api.post.persistence.entity;
+package tienda.uni.api.persistence.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import tienda.uni.api.auth.persistence.entity.UserEntity;
 
 import java.util.UUID;
 
