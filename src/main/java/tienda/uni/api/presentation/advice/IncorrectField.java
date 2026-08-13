@@ -1,4 +1,4 @@
-package tienda.uni.api.app.advice;
+package tienda.uni.api.presentation.advice;
 
 public record IncorrectField(
         String field,

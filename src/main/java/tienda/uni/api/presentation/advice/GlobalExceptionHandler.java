@@ -1,4 +1,4 @@
-package tienda.uni.api.app.advice;
+package tienda.uni.api.presentation.advice;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;

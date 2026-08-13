@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.presentation.advice;
+package tienda.uni.api.presentation.advice;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -8,11 +8,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import tienda.uni.api.app.dto.ProblemDetailResponse;
-import tienda.uni.api.auth.service.exception.EmailAlreadyExistsException;
-import tienda.uni.api.auth.service.exception.EmailDomainNotAllowedException;
-
-import java.net.URI;
+import tienda.uni.api.presentation.dto.ProblemDetailResponse;
+import tienda.uni.api.service.exception.EmailAlreadyExistsException;
+import tienda.uni.api.service.exception.EmailDomainNotAllowedException;
 
 @RestControllerAdvice
 public class AuthenticationExceptionHandler {
