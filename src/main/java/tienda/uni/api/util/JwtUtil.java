@@ -1,4 +1,4 @@
-package tienda.uni.api.auth.util;
+package tienda.uni.api.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -9,8 +9,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import tienda.uni.api.auth.persistence.model.AuthenticatedUser;
-import tienda.uni.api.auth.service.exception.InvalidAccessTokenException;
+import tienda.uni.api.persistence.model.AuthenticatedUser;
+import tienda.uni.api.service.exception.InvalidAccessTokenException;
 
 import java.time.Instant;
 import java.util.UUID;

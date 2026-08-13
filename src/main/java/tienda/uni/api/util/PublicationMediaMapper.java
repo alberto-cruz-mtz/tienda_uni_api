@@ -1,10 +1,8 @@
-package tienda.uni.api.post.util;
+package tienda.uni.api.util;
 
 import org.springframework.stereotype.Component;
-import tienda.uni.api.post.persistence.entity.PublicationEntity;
-import tienda.uni.api.post.persistence.entity.PublicationMediaEntity;
-import tienda.uni.api.post.presentation.dto.MediaContentRequest;
-import tienda.uni.api.post.presentation.dto.PostRequest;
+import tienda.uni.api.persistence.entity.PublicationMediaEntity;
+import tienda.uni.api.presentation.dto.MediaContentRequest;
 
 import java.util.List;
 

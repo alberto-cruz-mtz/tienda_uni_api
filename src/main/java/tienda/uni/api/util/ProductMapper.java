@@ -1,14 +1,12 @@
-package tienda.uni.api.post.util;
+package tienda.uni.api.util;
 
 import org.springframework.stereotype.Component;
-import tienda.uni.api.post.persistence.entity.ProductEntity;
-import tienda.uni.api.post.persistence.entity.PublicationEntity;
-import tienda.uni.api.post.presentation.dto.ProductRequest;
-import tienda.uni.api.post.presentation.dto.ProductResponse;
+import tienda.uni.api.persistence.entity.ProductEntity;
+import tienda.uni.api.persistence.entity.PublicationEntity;
+import tienda.uni.api.presentation.dto.ProductRequest;
+import tienda.uni.api.presentation.dto.ProductResponse;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
 
 @Component
 public class ProductMapper {
