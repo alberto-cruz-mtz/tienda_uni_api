@@ -1,4 +1,4 @@
-package tienda.uni.api.app.configuration.security.filter;
+package tienda.uni.api.configuration.security.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
@@ -16,8 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
-import tienda.uni.api.auth.service.exception.InvalidAccessTokenException;
-import tienda.uni.api.auth.util.JwtUtil;
+import tienda.uni.api.service.exception.InvalidAccessTokenException;
+import tienda.uni.api.util.JwtUtil;
 
 import java.io.IOException;
 

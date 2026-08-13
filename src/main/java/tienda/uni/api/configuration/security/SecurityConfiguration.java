@@ -1,4 +1,4 @@
-package tienda.uni.api.app.configuration.security;
+package tienda.uni.api.configuration.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import tienda.uni.api.app.configuration.security.filter.JwtAuthenticationFilter;
-import tienda.uni.api.auth.persistence.model.Role;
+import tienda.uni.api.configuration.security.filter.JwtAuthenticationFilter;
+import tienda.uni.api.persistence.model.Role;
 
 import java.util.Arrays;
 import java.util.List;
