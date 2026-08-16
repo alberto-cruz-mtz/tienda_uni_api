@@ -1,0 +1,26 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TiendaUniDocker" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="docker" />
+    <option name="ENABLE_JMX_AUTH" value="true" />
+    <module name="TiendaUniApi" />
+    <target name="backend" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="tienda.uni.api.TiendaUniApiApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+  <configuration default="false" name="TiendaUniDocker" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="services">
+          <list>
+            <option value="backend" />
+            <option value="postgres" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="docker-compose.dev.yaml" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
