@@ -27,115 +27,96 @@ import java.util.UUID;
 public class AuthenticationController {
 
     @Value("${app.cookie.secure}")
-    public boolean IS_COOKIE_SECURE;
+    private boolean COOKIE_SECURE;
 
     private final AuthenticationService authenticationService;
     private final RefreshTokenService refreshTokenService;
 
+    private static final long SEVEN_DAYS_IN_SECONDS = 604800;
+    private static final long FIFTEEN_MINUTES_IN_SECONDS = 900;
+    private static final long ZERO_SECONDS = 0;
+    private static final String EMPTY_TOKEN = "";
+
     @PostMapping("/signup")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {
         var response = authenticationService.register(request);
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", response.accessToken())
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api")
-                .maxAge(900) // 15 minutes
-                .sameSite("Strict")
-                .build();
-
-        String refreshToken = response.refreshToken().toString();
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api/auth")
-                .maxAge(604800) // 7 days
-                .sameSite("Strict")
-                .build();
+        var cookieHeader = this.generateTokenCookieHeader(response.accessToken(), response.refreshToken().toString());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
+                .headers(cookieHeader)
                 .body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest request) {
         var response = authenticationService.authenticate(request.email(), request.password());
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", response.accessToken())
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api")
-                .maxAge(900) // 15 minutes
-                .sameSite("Strict")
-                .build();
-
-        String refreshToken = response.refreshToken().toString();
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api/auth")
-                .maxAge(604800) // 7 days
-                .sameSite("Strict")
-                .build();
+        var cookieHeader = this.generateTokenCookieHeader(response.accessToken(), response.refreshToken().toString());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
+                .headers(cookieHeader)
                 .body(response);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshToken(@CookieValue(value = "refreshToken") UUID refreshToken) {
         var tokens = refreshTokenService.renewAccessAndRefreshToken(refreshToken);
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", tokens.accessToken())
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api")
-                .maxAge(900) // 15 minutes
-                .sameSite("Strict")
-                .build();
-
-        String newRefreshToken = tokens.refreshToken().toString();
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", newRefreshToken)
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api/auth")
-                .maxAge(604800) // 7 days
-                .sameSite("Strict")
-                .build();
+        var cookieHeader = this.generateTokenCookieHeader(tokens.accessToken(), tokens.refreshToken().toString());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
+                .headers(cookieHeader)
                 .body(null);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) UUID refreshToken) {
         refreshTokenService.revokeRefreshToken(refreshToken);
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", "")
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
-
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(IS_COOKIE_SECURE)
-                .path("/api/auth")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
+        var cookieHeader = this.generateCookieHeaderCleanup();
 
         return ResponseEntity
                 .noContent()
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshTokenCookie.toString())
+                .headers(cookieHeader)
+                .build();
+    }
+
+    private HttpHeaders generateTokenCookieHeader(String accessToken, String refreshToken) {
+        var accessTokenCookie = this.buildAccessTokenCookie(accessToken, FIFTEEN_MINUTES_IN_SECONDS);
+        var refreshTokenCookie = this.buildRefreshTokenCookie(refreshToken, SEVEN_DAYS_IN_SECONDS);
+
+        return this.buildCookieHeaderWithTokens(accessTokenCookie, refreshTokenCookie);
+    }
+
+    private HttpHeaders generateCookieHeaderCleanup() {
+        var accessTokenCookie = this.buildAccessTokenCookie(EMPTY_TOKEN, ZERO_SECONDS);
+        var refreshTokenCookie = this.buildRefreshTokenCookie(EMPTY_TOKEN, ZERO_SECONDS);
+
+        return this.buildCookieHeaderWithTokens(accessTokenCookie, refreshTokenCookie);
+    }
+
+    private HttpHeaders buildCookieHeaderWithTokens(ResponseCookie accessTokenCookie, ResponseCookie refreshTokenCookie) {
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        return headers;
+    }
+
+    private ResponseCookie buildAccessTokenCookie(String accessToken, long expirationTimeInSeconds) {
+        return this.createCookie("accessToken", accessToken, "/api", expirationTimeInSeconds);
+    }
+
+    private ResponseCookie buildRefreshTokenCookie(String refreshToken, long expirationTimeInSeconds) {
+        return this.createCookie("refreshToken", refreshToken, "/api/auth", expirationTimeInSeconds);
+    }
+
+    private ResponseCookie createCookie(String name, String value, String path, long maxAge) {
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(COOKIE_SECURE)
+                .path(path)
+                .maxAge(maxAge)
+                .sameSite("Strict")
                 .build();
     }
 }
