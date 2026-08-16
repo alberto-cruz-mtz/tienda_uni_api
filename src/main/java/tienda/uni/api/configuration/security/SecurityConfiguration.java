@@ -57,6 +57,9 @@ public class SecurityConfiguration {
                     http.requestMatchers(HttpMethod.GET, "/posts/{id}").hasRole(Role.CUSTOMER.name());
                     http.requestMatchers(HttpMethod.POST, "/posts").hasRole(Role.SELLER.name());
 
+                    http.requestMatchers(HttpMethod.PATCH, "/profiles").hasRole(Role.CUSTOMER.name());
+                    http.requestMatchers(HttpMethod.POST, "/profiles/presigned-url").hasRole(Role.CUSTOMER.name());
+
                     http.requestMatchers("/actuator/**").permitAll();
 
                     http.anyRequest().denyAll();

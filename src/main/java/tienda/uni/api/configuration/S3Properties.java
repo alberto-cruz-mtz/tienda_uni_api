@@ -11,8 +11,14 @@ public record S3Properties(
         Buckets buckets
 ) {
     public record Buckets(
-            String profilePictures,
-            String postMedia
+            BucketItem profilePictures,
+            BucketItem postMedia
+    ) {
+    }
+
+    public record BucketItem(
+            String name,
+            String url
     ) {
     }
 }

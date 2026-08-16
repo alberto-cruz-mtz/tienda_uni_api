@@ -34,5 +34,9 @@ aws:
     access-key: ${AWS_ACCESS_KEY:your-access-key}
     secret-key: ${AWS_SECRET_KEY:your-secret-key}
     buckets:
-      profile-pictures: ${AWS_S3_BUCKET_PROFILE_PICTURES:avatars}
-      post-media: ${AWS_S3_BUCKET_POST_MEDIA:publication-media}
+      profile-pictures:
+        name: ${AWS_S3_BUCKET_PROFILE_PICTURES_NAME:avatars}
+        url: ${AWS_S3_BUCKET_PROFILE_PICTURES_URL:http://localhost:9000/avatars}
+      post-media:
+        name: ${AWS_S3_BUCKET_POST_MEDIA_NAME:publication-media}
+        url: ${AWS_S3_BUCKET_POST_MEDIA_URL:http://localhost:9000/avatars}
