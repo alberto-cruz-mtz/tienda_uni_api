@@ -47,13 +47,13 @@ public class StorageServiceImpl implements StorageService {
 
     private String determineBucketName(UploadTarget target) {
         return switch (target) {
-            case PROFILE_PICTURE -> properties.buckets().profilePictures();
-            case PUBLICATION_MEDIA -> properties.buckets().postMedia();
+            case PROFILE_PICTURE -> properties.buckets().profilePictures().name();
+            case PUBLICATION_MEDIA -> properties.buckets().postMedia().name();
         };
     }
 
     private String generateKey(String fileName) {
-        return UUID.randomUUID() + "-" + fileName;
+        return UUID.randomUUID() + "/" + fileName;
     }
 
     private PutObjectRequest createPutObjectRequest(String bucket, String key, String contentType) {
