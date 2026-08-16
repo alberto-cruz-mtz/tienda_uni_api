@@ -14,11 +14,11 @@ public record UserResponse(
         String building
 ) {
 
-    public static UserResponse forRegistration(String email, String name) {
+    public static UserResponse createResponseForRegistration(String email, String name) {
         return new UserResponse(email, name, null, null);
     }
 
-    public static UserResponse forAuthentication(ProfileEntity profile, String fileManagerUrl) {
+    public static UserResponse createResponseForAuthentication(ProfileEntity profile, String fileManagerUrl) {
         String fullName = profile.getFirstName() + " " + profile.getLastName();
         String avatarUrl = Optional.ofNullable(profile.getPhotoUrl())
                 .map(photoUrl -> fileManagerUrl + "/" + photoUrl)
