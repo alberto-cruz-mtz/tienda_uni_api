@@ -22,6 +22,7 @@ import tienda.uni.api.persistence.repository.VerificationTokenRepository;
 import tienda.uni.api.presentation.dto.AuthenticationResponse;
 import tienda.uni.api.presentation.dto.RegisterRequest;
 import tienda.uni.api.presentation.dto.RegisterResponse;
+import tienda.uni.api.presentation.dto.TokenBundle;
 import tienda.uni.api.presentation.dto.UserResponse;
 import tienda.uni.api.service.interfaces.AuthenticationService;
 import tienda.uni.api.service.interfaces.EmailSenderService;
@@ -37,7 +38,8 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationServiceImpl implements AuthenticationService { private final JwtUtil jwtUtil;
+public class AuthenticationServiceImpl implements AuthenticationService {
+    private final JwtUtil jwtUtil;
 
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
@@ -54,72 +56,99 @@ public class AuthenticationServiceImpl implements AuthenticationService { privat
     @Override
     @Transactional
     public AuthenticationResponse authenticate(String email, String password) {
-        // authenticate user credentials
-        Authentication credentials = new UsernamePasswordAuthenticationToken(email, password, Collections.emptyList());
-        Authentication authentication = authenticationManager.authenticate(credentials);
-
-        //generate response
-        AuthenticatedUser authenticatedUser = (AuthenticatedUser) authentication.getPrincipal();
-        assert authenticatedUser != null;
-
-        UserEntity user = authenticatedUser.getUser();
-
-        var userResponse = UserResponse.forAuthentication(user.getProfile(), s3Properties.buckets().profilePictures().url());
-        Instant expirationTime = Instant.now().plusSeconds(jwtUtil.TOKEN_EXPIRATION_TIME_IN_SECONDS);
-
-        String secret = jwtUtil.generateToken(authenticatedUser);
-        UUID refreshToken = refreshTokenService.generateRefreshToken(user);
-
-        return new AuthenticationResponse(user.getId(), userResponse, user.isVerified(), expirationTime, secret, refreshToken);
+        Authentication authentication = this.authenticateUserCredentials(email, password);
+        UserEntity user = this.findUserByAuthentication(authentication);
+        return this.buildAuthenticationResponse(user);
     }
 
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        String email = request.email();
+        this.ensureThatEmailIsNotRegistered(request.email());
 
-        // ensure that the email is not already registered
+        UserEntity user = this.buildNewUser(request);
+        this.sendVerificationEmailAsynchronously(user);
+
+        String fullName = String.format("%s %s", request.firstName(), request.lastName());
+        return this.buildRegisterResponse(fullName, user);
+    }
+
+    private Authentication authenticateUserCredentials(String email, String password) {
+        Authentication credentials = new UsernamePasswordAuthenticationToken(email, password, Collections.emptyList());
+        return authenticationManager.authenticate(credentials);
+    }
+
+    private UserEntity findUserByAuthentication(Authentication authentication) {
+        //Principal is always AuthenticatedUser because we own the UserDetailsService.
+        AuthenticatedUser authenticatedUser = (AuthenticatedUser) authentication.getPrincipal();
+        assert authenticatedUser != null;
+
+        return authenticatedUser.getUser();
+    }
+
+    private void ensureThatEmailIsNotRegistered(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException("El correo electrónico proporcionado ya está registrado.");
         }
+    }
 
-        // ensure that the email domain is allowed and registered in the system and get the corresponding university
+    private UniversityEntity findUniversityByEmail(String email) {
         String domain = email.split("@")[1];
-        UniversityEntity university = universityRepository.findBySpecificDomain(domain)
-                .orElseThrow(() -> new EmailDomainNotAllowedException("El dominio del correo electrónico proporcionado no está permitido o registrado."));
+        String errorMessage = "El dominio del correo electrónico proporcionado no está permitido o registrado.";
 
-        // get initial Role (UNVERIFIED) for the new user
+        return universityRepository.findBySpecificDomain(domain)
+                .orElseThrow(() -> new EmailDomainNotAllowedException(errorMessage));
+    }
+
+    private RoleEntity getUnverifiedUserRole() {
         RoleEntity role = roleRepository.findByName(Role.UNVERIFIED);
         assert role != null; // This assertion is safe because the role is predefined and should always exist in the database.
-        // save the new user with the provided information in the database
+        return role;
+    }
+
+    private UserEntity buildNewUser(RegisterRequest request) {
+        UniversityEntity university = this.findUniversityByEmail(request.email());
+        RoleEntity role = this.getUnverifiedUserRole();
+
         String encodedPassword = passwordEncoder.encode(request.password());
         var profile = ProfileEntity.create(request.firstName(), request.lastName());
-        UserEntity user = UserEntity.create(email, encodedPassword, Set.of(role), profile, university);
-        profile.setUser(user); // Set the user reference in the profile entity
-        UserEntity savedUser = userRepository.save(user);
 
-        var verificationToken = VerificationTokenEntity.create(savedUser);
+        return this.assembleUser(request.email(), encodedPassword, university, role, profile);
+    }
+
+    private UserEntity assembleUser(String email, String password, UniversityEntity university, RoleEntity role, ProfileEntity profile) {
+        UserEntity user = UserEntity.create(email, password, Set.of(role), profile, university);
+        profile.setUser(user); // bidirectional ownership; ProfileEntity cannot set itself without User identity
+        return this.userRepository.save(user);
+    }
+
+    private void sendVerificationEmailAsynchronously(UserEntity user) {
+        var verificationToken = VerificationTokenEntity.create(user);
         verificationTokenRepository.save(verificationToken);
 
-        emailSender.sendVerificationEmail(savedUser.getEmail(), verificationToken.getToken());
+        emailSender.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
+    }
 
-        // generate response
-        String fullName = request.firstName() + " " + request.lastName();
-        UserResponse userResponse = UserResponse.forRegistration(email, fullName);
+    private TokenBundle buildTokensFor(UserEntity user) {
+        AuthenticatedUser authenticatedUser = AuthenticatedUser.fromUserEntity(user);
+
+        String accessToken = jwtUtil.generateToken(authenticatedUser);
+        UUID refreshToken = refreshTokenService.generateRefreshToken(user);
         Instant expirationTime = Instant.now().plusSeconds(jwtUtil.TOKEN_EXPIRATION_TIME_IN_SECONDS);
 
-        AuthenticatedUser authenticatedUser = AuthenticatedUser.fromUserEntity(savedUser);
-        String secret = jwtUtil.generateToken(authenticatedUser);
-
-        UUID refreshToken = refreshTokenService.generateRefreshToken(savedUser);
-
-        return new RegisterResponse(
-                savedUser.getId(),
-                userResponse,
-                savedUser.isVerified(),
-                expirationTime,
-                secret,
-                refreshToken
-        );
+        return new TokenBundle(accessToken, refreshToken, expirationTime);
     }
+
+    private AuthenticationResponse buildAuthenticationResponse(UserEntity user) {
+        var userResponse = UserResponse.createResponseForAuthentication(user.getProfile(), s3Properties.buckets().profilePictures().url());
+        var tokenBundle = this.buildTokensFor(user);
+        return AuthenticationResponse.create(user, userResponse, tokenBundle);
+    }
+
+    private RegisterResponse buildRegisterResponse(String fullName, UserEntity user) {
+        UserResponse userResponse = UserResponse.createResponseForRegistration(user.getEmail(), fullName);
+        TokenBundle tokenBundle = this.buildTokensFor(user);
+        return RegisterResponse.create(user, userResponse, tokenBundle);
+    }
+
 }
