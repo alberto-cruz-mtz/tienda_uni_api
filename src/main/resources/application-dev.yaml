@@ -36,5 +36,9 @@ aws:
     access-key: your-access-key
     secret-key: your-secret-key
     buckets:
-      profile-pictures: avatars
-      post-media: publication-media
+      profile-pictures:
+        name: avatars
+        url: http://localhost:9000/avatars
+      post-media:
+        name: publication-media
+        url: http://localhost:9000/publication-media
