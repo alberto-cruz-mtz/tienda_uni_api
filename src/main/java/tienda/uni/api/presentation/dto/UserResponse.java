@@ -18,14 +18,17 @@ public record UserResponse(
         return new UserResponse(email, name, null, null);
     }
 
-    public static UserResponse forAuthentication(ProfileEntity profile) {
+    public static UserResponse forAuthentication(ProfileEntity profile, String fileManagerUrl) {
         String fullName = profile.getFirstName() + " " + profile.getLastName();
+        String avatarUrl = Optional.ofNullable(profile.getPhotoUrl())
+                .map(photoUrl -> fileManagerUrl + "/" + photoUrl)
+                .orElse(null);
 
         var buildingName = Optional.of(profile)
                 .map(ProfileEntity::getBuilding)
                 .map(BuildingEntity::getName)
                 .orElse("Aun no ha sido asignado su edificio");
 
-        return new UserResponse(null, fullName, profile.getPhotoUrl(), buildingName);
+        return new UserResponse(null, fullName, avatarUrl, buildingName);
     }
 }

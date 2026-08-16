@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tienda.uni.api.configuration.S3Properties;
 import tienda.uni.api.persistence.entity.VerificationTokenEntity;
 import tienda.uni.api.persistence.model.AuthenticatedUser;
 import tienda.uni.api.persistence.entity.ProfileEntity;
@@ -36,9 +37,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationServiceImpl implements AuthenticationService {
-
-    private final JwtUtil jwtUtil;
+public class AuthenticationServiceImpl implements AuthenticationService { private final JwtUtil jwtUtil;
 
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
@@ -50,6 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final RefreshTokenService refreshTokenService;
     private final EmailSenderService emailSender;
+    private final S3Properties s3Properties;
 
     @Override
     @Transactional
@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserEntity user = authenticatedUser.getUser();
 
-        var userResponse = UserResponse.forAuthentication(user.getProfile());
+        var userResponse = UserResponse.forAuthentication(user.getProfile(), s3Properties.buckets().profilePictures().url());
         Instant expirationTime = Instant.now().plusSeconds(jwtUtil.TOKEN_EXPIRATION_TIME_IN_SECONDS);
 
         String secret = jwtUtil.generateToken(authenticatedUser);
