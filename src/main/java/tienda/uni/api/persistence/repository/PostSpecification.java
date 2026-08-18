@@ -1,20 +1,32 @@
 package tienda.uni.api.persistence.repository;
 
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import tienda.uni.api.persistence.entity.PublicationEntity;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class PostSpecification {
 
+    public static Specification<PublicationEntity> getOnlyPublicationsByIdAndPostedAtLessThat(UUID id, Instant postedAt) {
+        return ((root, query, criteriaBuilder) -> {
+            if (id == null || postedAt == null) return criteriaBuilder.conjunction();
+
+            Predicate postedAtLess = criteriaBuilder.lessThan(root.get("postedAt"), postedAt);
+            Predicate postedAtEqual = criteriaBuilder.equal(root.get("postedAt"), postedAt);
+            Predicate idLess = criteriaBuilder.lessThan(root.get("id"), id);
+            Predicate tieBreakerPredicate = criteriaBuilder.and(postedAtEqual, idLess);
+
+            return criteriaBuilder.or(postedAtLess, tieBreakerPredicate);
+        });
+    }
+
     public static Specification<PublicationEntity> fetchRelations() {
         return ((root, query, criteriaBuilder) -> {
             if (Long.class != query.getResultType() && long.class != query.getResultType()) {
-                // Traemos las relaciones OneToOne y ManyToOne (Relaciones simples)
                 root.fetch("product", JoinType.LEFT);
-
-                // Podemos encadenar fetch para traer el vendedor y su usuario
                 root.fetch("salePerson", JoinType.INNER)
                         .fetch("user", JoinType.INNER);
             }
