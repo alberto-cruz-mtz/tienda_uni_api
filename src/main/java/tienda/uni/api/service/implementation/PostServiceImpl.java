@@ -1,6 +1,8 @@
 package tienda.uni.api.service.implementation;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -16,16 +18,20 @@ import tienda.uni.api.persistence.repository.PublicationMediaRepository;
 import tienda.uni.api.persistence.repository.PublicationRepository;
 import tienda.uni.api.persistence.repository.SalePersonRepository;
 import tienda.uni.api.persistence.repository.TagRepository;
+import tienda.uni.api.presentation.dto.Cursor;
 import tienda.uni.api.presentation.dto.DataResponse;
 import tienda.uni.api.presentation.dto.PaginationMetadata;
 import tienda.uni.api.presentation.dto.PostParams;
 import tienda.uni.api.presentation.dto.PostRequest;
+import tienda.uni.api.presentation.dto.PostRequestParams;
 import tienda.uni.api.presentation.dto.PostResponse;
 import tienda.uni.api.service.interfaces.PostService;
 import tienda.uni.api.util.ProductMapper;
 import tienda.uni.api.util.PublicationMapper;
 import tienda.uni.api.util.PublicationMediaMapper;
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +39,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PublicationRepository publicationRepository;
     private final PublicationMediaRepository publicationMediaRepository;
     private final SalePersonRepository salePersonRepository;
@@ -65,11 +72,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public DataResponse<PostResponse> getAllPosts(PostParams params) {
-        var publications = this.findPublicationsBySearchCriteria(params);
+    public DataResponse<PostResponse> getAllPosts(UUID universityId, PostRequestParams params) {
+        var publications = this.findPublicationsBySearchCriteria(universityId, params);
 
-        var pagination = this.converterFromPageToPaginationMetadata(publications);
-        var posts = publicationMapper.toPostResponse(publications.toList());
+        boolean hasMore = publications.getTotalElements() > params.pageable().getPageSize();
+        log.info("Total de elementos {}", publications.getTotalElements());
+        var publicationsList = publications.getContent();
+        String cursor = null;
+
+        if (hasMore) {
+            var lastPublication = publicationsList.getLast();
+            var cursorObj = new Cursor(lastPublication.getId(), lastPublication.getPostedAt()).join();
+            byte[] encodedCursor = Base64.getUrlEncoder().encode(cursorObj.getBytes());
+            cursor = new String(encodedCursor);
+        }
+
+        var pagination = new PaginationMetadata(params.pageable().getPageSize(), hasMore, cursor);
+        var posts = publicationMapper.toPostResponse(publicationsList);
 
         return new DataResponse<>(pagination, posts);
     }
@@ -83,20 +102,20 @@ public class PostServiceImpl implements PostService {
     }
 
     private PaginationMetadata converterFromPageToPaginationMetadata(Page<PublicationEntity> page) {
-        var nextLink = page.hasNext() ? "/posts?page=" + (page.getNumber() + 1) : null;
+        boolean hasMore = page.getTotalElements() == page.getSize();
 
         return new PaginationMetadata(
-                page.getNumber(),
                 page.getSize(),
-                page.getNumberOfElements(),
-                nextLink
+                hasMore,
+                null
         );
     }
 
-    private Page<PublicationEntity> findPublicationsBySearchCriteria(PostParams params) {
+    private Page<PublicationEntity> findPublicationsBySearchCriteria(UUID universityId, PostRequestParams params) {
         var specification = Specification
                 .where(PostSpecification.fetchRelations())
-                .and(PostSpecification.getOnlyPublicationsByUniversity(params.universityId()))
+                .and(PostSpecification.getOnlyPublicationsByUniversity(universityId))
+                .and(PostSpecification.getOnlyPublicationsByIdAndPostedAtLessThat(params.cursor().id(), params.cursor().postedAt()))
                 .and(PostSpecification.searchByTitle(params.search()))
                 .and(PostSpecification.filterByStock(params.isOutOfStock()));
 
