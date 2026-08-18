@@ -30,6 +30,7 @@ import tienda.uni.api.util.ProductMapper;
 import tienda.uni.api.util.PublicationMapper;
 import tienda.uni.api.util.PublicationMediaMapper;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -39,7 +40,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PublicationRepository publicationRepository;
     private final PublicationMediaRepository publicationMediaRepository;
     private final SalePersonRepository salePersonRepository;
@@ -74,23 +74,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public DataResponse<PostResponse> getAllPosts(UUID universityId, PostRequestParams params) {
         var publications = this.findPublicationsBySearchCriteria(universityId, params);
-
-        boolean hasMore = publications.getTotalElements() > params.pageable().getPageSize();
-        log.info("Total de elementos {}", publications.getTotalElements());
-        var publicationsList = publications.getContent();
-        String cursor = null;
-
-        if (hasMore) {
-            var lastPublication = publicationsList.getLast();
-            var cursorObj = new Cursor(lastPublication.getId(), lastPublication.getPostedAt()).join();
-            byte[] encodedCursor = Base64.getUrlEncoder().encode(cursorObj.getBytes());
-            cursor = new String(encodedCursor);
-        }
-
-        var pagination = new PaginationMetadata(params.pageable().getPageSize(), hasMore, cursor);
-        var posts = publicationMapper.toPostResponse(publicationsList);
-
-        return new DataResponse<>(pagination, posts);
+        return this.buildPostDataResponse(publications, params.pageable().getPageSize());
     }
 
     @Override
@@ -101,14 +85,35 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("publication not found"));
     }
 
-    private PaginationMetadata converterFromPageToPaginationMetadata(Page<PublicationEntity> page) {
-        boolean hasMore = page.getTotalElements() == page.getSize();
+    private DataResponse<PostResponse> buildPostDataResponse(Page<PublicationEntity> publications, int limit) {
+        var publicationsList = publications.getContent();
+        var lastPublication = publicationsList.isEmpty() ? null : publicationsList.getLast();
+
+        var pagination = this.converterFromPageToPaginationMetadata(
+                publications.getTotalElements(),
+                limit,
+                lastPublication
+        );
+        var posts = publicationMapper.toPostResponse(publicationsList);
+
+        return new DataResponse<>(pagination, posts);
+    }
+
+    private PaginationMetadata converterFromPageToPaginationMetadata(long totalElements, int limit, PublicationEntity lastPublication) {
+        boolean hasMore = totalElements > limit;
+        String cursor = hasMore && lastPublication != null ? buildEncodedCursorToBase64(lastPublication.getId(), lastPublication.getPostedAt()) : null;
 
         return new PaginationMetadata(
-                page.getSize(),
+                limit,
                 hasMore,
-                null
+                cursor
         );
+    }
+
+    private String buildEncodedCursorToBase64(UUID id, Instant postedAt) {
+        var cursorObj = new Cursor(id, postedAt).join();
+        byte[] encodedCursor = Base64.getUrlEncoder().encode(cursorObj.getBytes());
+        return new String(encodedCursor);
     }
 
     private Page<PublicationEntity> findPublicationsBySearchCriteria(UUID universityId, PostRequestParams params) {
