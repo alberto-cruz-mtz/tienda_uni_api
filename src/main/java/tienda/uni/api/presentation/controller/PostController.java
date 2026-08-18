@@ -21,6 +21,7 @@ import tienda.uni.api.presentation.dto.BatchUploadResponse;
 import tienda.uni.api.presentation.dto.DataResponse;
 import tienda.uni.api.presentation.dto.PostParams;
 import tienda.uni.api.presentation.dto.PostRequest;
+import tienda.uni.api.presentation.dto.PostRequestParams;
 import tienda.uni.api.presentation.dto.PostResponse;
 import tienda.uni.api.service.interfaces.PostService;
 import tienda.uni.api.service.interfaces.StorageService;
@@ -56,15 +57,12 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<DataResponse<PostResponse>> getPosts(
-            @AuthenticationPrincipal AuthenticatedUser userDetails,
-            @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "isOutOfStock", required = false, defaultValue = "false") boolean isOutOfStock,
-            @PageableDefault(sort = "postedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            PostRequestParams requestParams,
+            @AuthenticationPrincipal AuthenticatedUser userDetails
+    ) {
 
         UUID universityId = userDetails.getUniversityId();
-
-        PostParams postParams = new PostParams(pageable, universityId, search, isOutOfStock);
-        var response = postService.getAllPosts(postParams);
+        var response = postService.getAllPosts(universityId, requestParams);
 
         return ResponseEntity.ok(response);
     }
